@@ -93,8 +93,10 @@ Map mapCopy(Map map){
     }
 
     KeyData ptr_new = malloc(sizeof (KeyData));
-    if(ptr_new == NULL)
+    if(ptr_new == NULL) {
+        mapDestroy(newMap);
         return NULL;
+    }
     newMap->key_data = ptr_new;
     MAP_FOREACH(KeyData , ptr, map){
         ptr_new->key = map->copyKey(ptr->key);
@@ -102,11 +104,14 @@ Map mapCopy(Map map){
         if(ptr->next == NULL) // Finished copying successfully.
             break;
         ptr_new->next = malloc(sizeof (KeyData));
-        if(ptr_new->next == NULL)
+        if(ptr_new->next == NULL) {
+            mapDestroy(newMap);
             return NULL;
+        }
         ptr_new = ptr_new->next;
     }
     ptr_new->next = NULL;
+    newMap->size = map->size;
     return newMap;
 
 }
