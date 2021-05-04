@@ -245,6 +245,4 @@ MapResult mapClear(Map map);
 
 #endif /* MAP_H_ */
 
-/*MAP_FOREACH(KeyData, ptr, map){
-    if(map->keycpr(given_key , ptr->key)<0)
-    }*/
+/
