@@ -218,7 +218,7 @@ MapResult mapPut(Map map, MapKeyElement keyElement, MapDataElement dataElement){
     if(map->compareKeys(map->iterator->next->key, keyElement) == 0){ //Exists. hence, update.
         map->freeKey(map->iterator->next->key);
         map->freeData(map->iterator->next->data);
-        map->iterator->next->key = map->copyData(keyElement); /// If failed return MAP_OUT_OF_MEMORY. How?
+        map->iterator->next->key = map->copyKey(keyElement); /// If failed return MAP_OUT_OF_MEMORY. How?
         map->iterator->next->data = map->copyData(dataElement); /// If failed return MAP_OUT_OF_MEMORY. How?
 
     }
@@ -277,6 +277,9 @@ MapResult mapRemove(Map map, MapKeyElement keyElement){
     while (map->iterator->next != NULL) {
         if (map->compareKeys(map->iterator->next->key, keyElement) == 0) {
             KeyData tmp = map->iterator->next;
+         if(map->iterator->next->next == NULL){
+            map->iterator->next = NULL
+         }
             map->iterator->next = map->iterator->next->next; ///if NULL?
             map->freeKey(tmp);
             map->freeData(tmp);
@@ -308,7 +311,7 @@ MapKeyElement mapGetFirst(Map map){
         return NULL;
     if(map->first_node == NULL)
         return NULL;
-    return map->first_node;
+    return map->first_node->key;
 }
 
 /**
@@ -352,5 +355,6 @@ MapResult mapClear(Map map){
         free(temp); // Free function for Keydata.c?
     }
     map->first_node = map->iterator;
+    map->size = 0;
     return MAP_SUCCESS;
 }
