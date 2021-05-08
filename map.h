@@ -234,6 +234,8 @@ MapKeyElement mapGetNext(Map map);
 */
 MapResult mapClear(Map map);
 
+
+
 /*!
 * Macro for iterating over a map.
 * Declares a new iterator for the loop.
