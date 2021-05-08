@@ -71,7 +71,14 @@ Map mapCreate(copyMapDataElements copyDataElement,
 * @param map - Target map to be deallocated. If map is NULL nothing will be
 * 		done
 */
-void mapDestroy(Map map);
+void mapDestroy(Map map){
+    if(map == NULL)
+        return;
+    mapClear(map);
+    free(map->iterator);
+    free(map->first_node);
+    free(map);
+}
 
 /**
 * mapCopy: Creates a copy of target map.
@@ -129,8 +136,11 @@ Map mapCopy(Map map){
 * 	-1 if a NULL pointer was sent.
 * 	Otherwise the number of elements in the map.
 */
-int mapGetSize(Map map);
-
+int mapGetSize(Map map){
+    if(map == NULL)
+        return -1;
+    return map->size;
+}
 /**
 * mapContains: Checks if a key element exists in the map. The key element will be
 * considered in the map if one of the key elements in the map it determined equal
@@ -176,7 +186,43 @@ bool mapContains(Map map, MapKeyElement element){
 * 	an element failed)
 * 	MAP_SUCCESS the paired elements had been inserted successfully
 */
-MapResult mapPut(Map map, MapKeyElement keyElement, MapDataElement dataElement);
+MapResult mapPut(Map map, MapKeyElement keyElement, MapDataElement dataElement){
+    if(map == NULL)
+        return MAP_NULL_ARGUMENT;
+    map->iterator = map->first_node;
+    while(map->iterator->next && map->compareKeys(map->iterator->next->key, keyElement) > 0) //run to relevant node
+        map->iterator = map->iterator->next;
+
+    if (map->iterator->next == NULL){ //END. hence, insert.
+        KeyData tmp = malloc(sizeof (KeyData));
+        if(tmp == NULL)
+            return MAP_OUT_OF_MEMORY; ///that's it? destroy?
+        map->iterator->next=tmp;
+        tmp->next = NULL;
+        tmp->key=map->copyKey(keyElement); /// If failed return MAP_OUT_OF_MEMORY. How?
+        tmp->data=map->copyData(dataElement); /// If failed return MAP_OUT_OF_MEMORY. How?
+        map->size++;
+    }
+
+    if(map->compareKeys(map->iterator->next->key, keyElement) < 0){ //SKIP. hence, insert.
+        KeyData tmp = malloc(sizeof(KeyData));
+        if(tmp == NULL)
+            return MAP_OUT_OF_MEMORY; ///that's it? destroy?
+        tmp->next = map->iterator->next;
+        map->iterator->next=tmp;
+        tmp->key=map->copyKey(keyElement); /// If failed return MAP_OUT_OF_MEMORY. How?
+        tmp->data=map->copyData(dataElement); /// If failed return MAP_OUT_OF_MEMORY. How?
+        map->size++;
+    }
+
+    if(map->compareKeys(map->iterator->next->key, keyElement) == 0){ //Exists. hence, update.
+        map->freeKey(map->iterator->next->key);
+        map->freeData(map->iterator->next->data);
+        map->iterator->next->key = map->copyData(keyElement); /// If failed return MAP_OUT_OF_MEMORY. How?
+        map->iterator->next->data = map->copyData(dataElement); /// If failed return MAP_OUT_OF_MEMORY. How?
+
+    }
+    return MAP_SUCCESS;
 
 /**
 *	mapGet: Returns the data associated with a specific key in the map.
@@ -225,8 +271,25 @@ MapDataElement mapGet(Map map, MapKeyElement keyElement){
 *  MAP_ITEM_DOES_NOT_EXIST if an equal key item does not already exists in the map
 * 	MAP_SUCCESS the paired elements had been removed successfully
 */
-MapResult mapRemove(Map map, MapKeyElement keyElement);
+MapResult mapRemove(Map map, MapKeyElement keyElement){
+    if(map == NULL || keyElement == NULL)
+        return MAP_NULL_ARGUMENT;
+    while (map->iterator->next != NULL) {
+        if (map->compareKeys(map->iterator->next->key, keyElement) == 0) {
+            KeyData tmp = map->iterator->next;
+            map->iterator->next = map->iterator->next->next; ///if NULL?
+            map->freeKey(tmp);
+            map->freeData(tmp);
+            free(tmp);
+            map->size--;
+            return MAP_SUCCESS;
+        }
+        if (map->compareKeys(map->iterator->key, keyElement) > 0)
+            break;
+    }
+    return MAP_ITEM_DOES_NOT_EXIST;
 
+}
 /**
 *	mapGetFirst: Sets the internal iterator (also called current key element) to
 *	the first key element in the map. There doesn't need to be an internal order
@@ -257,8 +320,14 @@ MapKeyElement mapGetFirst(Map map){
 * 	or a NULL sent as argument
 * 	The next key element on the map in case of success
 */
-MapKeyElement mapGetNext(Map map);
-
+MapKeyElement mapGetNext(Map map){
+    if(map == NULL || map->iterator == NULL)
+        return NULL;
+    map->iterator=map->iterator->next;
+    if(map->iterator == NULL)
+        return NULL;
+    return map->iterator->key;
+}
 
 /**
 * mapClear: Removes all key and data elements from target map.
