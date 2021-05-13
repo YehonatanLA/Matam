@@ -26,7 +26,7 @@
 *   mapRemove		- Removes a pair of (key,data) elements for which the key
 *                    matches a given element (by the key compare function).
 *   				  This resets the internal iterator.
-*   mapGetFirst	- Sets the internal iterator to the first key in the
+*   mapGetFirst	- Sets the internal iterator to the first (smallest) key in the
 *   				  map, and returns it.
 *   mapGetNext		- Advances the internal iterator to the next key and
 *   				  returns it.
@@ -35,16 +35,13 @@
 * 	 MAP_FOREACH	- A macro for iterating over the map's elements.
 */
 
-/** Type for defining the key-values relationship */
-typedef struct Key_Data_t *KeyData;
-
 /** Type for defining the map */
 typedef struct Map_t *Map;
-
 
 /** Type used for returning error codes from map functions */
 typedef enum MapResult_t {
     MAP_SUCCESS,
+    MAP_ERROR,
     MAP_OUT_OF_MEMORY,
     MAP_NULL_ARGUMENT,
     MAP_ITEM_ALREADY_EXISTS,
@@ -69,7 +66,7 @@ typedef void(*freeMapDataElements)(MapDataElement);
 /** Type of function for deallocating a key element of the map */
 typedef void(*freeMapKeyElements)(MapKeyElement);
 
-typedef void* Element;
+
 /**
 * Type of function used by the map to identify equal key elements.
 * This function should return:
@@ -156,7 +153,7 @@ bool mapContains(Map map, MapKeyElement element);
 *      which is given at initialization and old data memory would be
 *      deleted using the free function given at initialization.
 * @return
-* 	MAP_NULL_ARGUMENT if a NULL was sent as map
+* 	MAP_NULL_ARGUMENT if a NULL was sent as map or keyElement or dataElement
 * 	MAP_OUT_OF_MEMORY if an allocation failed (Meaning the function for copying
 * 	an element failed)
 * 	MAP_SUCCESS the paired elements had been inserted successfully
@@ -198,26 +195,27 @@ MapResult mapRemove(Map map, MapKeyElement keyElement);
 
 /**
 *	mapGetFirst: Sets the internal iterator (also called current key element) to
-*	the first key element in the map. There doesn't need to be an internal order
-*  of the keys so the "first" key element is any key element.
-*	Use this to start iterating over the map.
+*	the smallest key element in the map and returns a copy of it. There doesn't
+ *	need to be an internal order of the keys so the "first" key element is the
+ *	smallest key available in the map. Use this to start iterating over the map.
 *	To continue iteration use mapGetNext
 *
-* @param map - The map for which to set the iterator and return the first
+* @param map - The map for which to set the iterator and return a copy of the first
 * 		key element.
 * @return
-* 	NULL if a NULL pointer was sent or the map is empty.
+* 	NULL if a NULL pointer was sent or the map is empty or allocation fails
 * 	The first key element of the map otherwise
 */
 MapKeyElement mapGetFirst(Map map);
 
 /**
-*	mapGetNext: Advances the map iterator to the next key element and returns it.
-*	The next key element is any key element not previously returned by the iterator.
+*	mapGetNext: Advances the map iterator to the next key element and returns a copy of it.
+*	The next key element is the smallest key element of the key elements that are
+*   greater than the current key (key of the iterator).
 * @param map - The map for which to advance the iterator
 * @return
 * 	NULL if reached the end of the map, or the iterator is at an invalid state
-* 	or a NULL sent as argument
+* 	,or a NULL sent as argument or allocation fails
 * 	The next key element on the map in case of success
 */
 MapKeyElement mapGetNext(Map map);
@@ -234,8 +232,6 @@ MapKeyElement mapGetNext(Map map);
 */
 MapResult mapClear(Map map);
 
-
-
 /*!
 * Macro for iterating over a map.
 * Declares a new iterator for the loop.
@@ -246,5 +242,3 @@ MapResult mapClear(Map map);
         iterator = mapGetNext(map))
 
 #endif /* MAP_H_ */
-
-/
