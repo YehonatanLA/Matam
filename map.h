@@ -41,7 +41,7 @@ typedef struct Map_t *Map;
 /** Type used for returning error codes from map functions */
 typedef enum MapResult_t {
     MAP_SUCCESS,
-    MAP_ERROR,
+    MAP_ERROR, ///???
     MAP_OUT_OF_MEMORY,
     MAP_NULL_ARGUMENT,
     MAP_ITEM_ALREADY_EXISTS,
