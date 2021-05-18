@@ -1,15 +1,18 @@
 #include <stdlib.h>
-#include "../chessSystem.h"
-#include "../test_utilities.h"
+#include "chessSystem.h"
+#include "test_utilities.h"
 
 /*The number of tests*/
-#define NUMBER_TESTS 4
+#define NUMBER_TESTS 5
 
 
 bool testChessAddTournament() {
 	ChessSystem chess = chessCreate();
 	ASSERT_TEST(chessAddTournament(chess, 1, 4, "London") == CHESS_SUCCESS);
     ASSERT_TEST(chessAddTournament(chess, 2, 5, "London") == CHESS_SUCCESS);
+    ASSERT_TEST(chessAddTournament(chess, 4, 3, "A_") == CHESS_INVALID_LOCATION);
+    ASSERT_TEST(chessAddTournament(chess, 4, -1, "Test") == CHESS_INVALID_MAX_GAMES);
+    ASSERT_TEST(chessAddTournament(chess, -1, 3, "Test") == CHESS_INVALID_ID);
     ASSERT_TEST(chessAddTournament(chess, 1, 10, "Paris") == CHESS_TOURNAMENT_ALREADY_EXISTS);
 
 	chessDestroy(chess);
@@ -33,6 +36,13 @@ bool testChessAddGame(){
     ASSERT_TEST(chessAddGame(chess, 1, 1, 2, FIRST_PLAYER, 2000) == CHESS_TOURNAMENT_NOT_EXIST);
     ASSERT_TEST(chessAddTournament(chess, 1, 4, "London") == CHESS_SUCCESS);
     ASSERT_TEST(chessAddGame(chess, 1, 1, 2, FIRST_PLAYER, 2000) == CHESS_SUCCESS);
+    ASSERT_TEST(chessAddGame(chess, 1, 1, 3, FIRST_PLAYER, 3000) == CHESS_SUCCESS);
+    ASSERT_TEST(chessAddGame(chess, 1, 3, 2, SECOND_PLAYER, 3000) == CHESS_SUCCESS);
+    ASSERT_TEST(chessAddGame(chess, 1, 4, 1, SECOND_PLAYER, 1000) == CHESS_SUCCESS);
+    ASSERT_TEST(chessAddGame(chess, 1, 1, 5, FIRST_PLAYER, 2000) == CHESS_SUCCESS);
+    ASSERT_TEST(chessAddGame(chess, 1, 1, 6, DRAW, 3000) == CHESS_EXCEEDED_GAMES);
+    ASSERT_TEST(chessAddGame(chess, 1, -1, 4, FIRST_PLAYER, 3500) == CHESS_INVALID_ID);
+    ASSERT_TEST(chessAddGame(chess, 1, 3, 4, -1, 400) == CHESS_INVALID_ID);
 
     chessDestroy(chess);
     return true;
@@ -59,6 +69,16 @@ bool testChessPrintLevelsAndTournamentStatistics(){
     return true;
 }
 
+bool testChessCalculateAveragePlayTime(){
+    ChessSystem chess = chessCreate();
+    ChessResult *result = NULL;
+    ASSERT_TEST(chessAddTournament(chess, 1, 4, "London") == CHESS_SUCCESS);
+    ASSERT_TEST(chessAddGame(chess, 1, 1, 2, FIRST_PLAYER, 2000) == CHESS_SUCCESS);
+    ASSERT_TEST(chessCalculateAveragePlayTime(chess, 1, result) == 2000.0);
+    chessDestroy(chess);
+    return true;
+}
+
 
 
 /*The functions for the tests should be added here*/
@@ -66,7 +86,8 @@ bool (*tests[]) (void) = {
                       testChessAddTournament,
                       testChessRemoveTournament,
                       testChessAddGame,
-                      testChessPrintLevelsAndTournamentStatistics
+                      testChessPrintLevelsAndTournamentStatistics,
+                      testChessCalculateAveragePlayTime
 };
 
 /*The names of the test functions should be added here*/
@@ -74,7 +95,8 @@ const char* testNames[] = {
                            "testChessAddTournament",
                            "testChessRemoveTournament",
                            "testChessAddGame",
-                           "testChessPrintLevelsAndTournamentStatistics"
+                           "testChessPrintLevelsAndTournamentStatistics",
+                           "testChessCalculateAveragePlayTime"
 };
 
 int main(int argc, char *argv[]) {
