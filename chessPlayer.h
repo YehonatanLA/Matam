@@ -11,10 +11,10 @@ Player playerCreate();
 /** Function that copies a new player. Returns the copied player if succeeded, otherwise NULL.*/
 Player playerCopy(Player player);
 
-/** Function returns  the win amount of a player Assumes the player is not NULL.*/
+/** Function returns the win amount of a player. Assumes the player is not NULL.*/
 int getPLayerWins(Player player);
 
-/** Function returns the loss amount of a player Assumes the player is not NULL.*/
+/** Function returns the loss amount of a player. Assumes the player is not NULL.*/
 int getPlayerLosses(Player player);
 
 /** Function returns the tie amount of a player. Assumes the player is not NULL.*/
@@ -35,9 +35,14 @@ void decPLayerWins(Player player);
 /** Function decreases the loss amount of a player. Assumes the player is not NULL.   */
 void decPlayerLosses(Player player);
 
-/** Function decreases the tie amount of a player. Assumes the player is not NULL.   */
+/** Function restarts the tie amount of a player. Assumes the player is not NULL.   */
 void decPlayerTies(Player player);
 
+/** Function returns the total play amount of a player. Assumes the player is not NULL.*/
+int getPlayerPlayTime(Player player);
+
+/** Function adds to the total play time. */
+int addGameTime(Player player, int time);
 
 /** Function returns the amount of games a player played. Assumes the player is not NULL.   */
 inline int getAmountOfGames(Player player);

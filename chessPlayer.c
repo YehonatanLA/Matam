@@ -7,6 +7,7 @@ struct player_t {
     int wins;
     int losses;
     int ties;
+    int play_time;
 };
 
 Player createPlayer(){
@@ -17,6 +18,7 @@ Player createPlayer(){
     player->wins = 0;
     player->ties = 0;
     player->losses = 0;
+    player->play_time = 0;
     return player;
 }
 
@@ -32,6 +34,7 @@ Player playerCopy(Player player){
     new_player->wins = player->wins;
     new_player->losses = player->losses;
     new_player->ties = player->ties;
+    new_player->play_time = player->play_time;
     return new_player;
 }
 
@@ -57,6 +60,14 @@ int getPLayerWins(Player player){
 
 int getPlayerTies(Player player){
     return player->ties;
+}
+
+int getPlayerPlayTime(Player player){
+    return player->play_time;
+}
+
+int addGameTime(Player player, int time){
+    player->play_time += time;
 }
 
 

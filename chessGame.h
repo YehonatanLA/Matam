@@ -19,6 +19,9 @@ Winner getWinner(Game game);
 /** Functions returns the time of the game in seconds. Assumes the game is not NULL.*/
 int getGameTime(Game game);
 
+/** The function changes the winner in the game. */
+void changeWinner(Game game, Winner new_winner);
+
 /** Function that creates a new game. Returns NULL if allocation failed. */
 Game createGame(int first_player_id, int second_player_id, Winner winner, int game_time_seconds);
 
