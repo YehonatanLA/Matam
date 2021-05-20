@@ -7,16 +7,16 @@
 
 typedef struct game_t *Game;
 
-/** Functions returns the id of the first player of the game. */
+/** Functions returns the id of the first player of the game.Assumes the game is not NULL. */
 int getFirstPlayerId(Game game);
 
-/** Functions returns the id of the second player of the game. */
+/** Functions returns the id of the second player of the game. Assumes the game is not NULL.*/
 int getSecondPlayerId(Game game);
 
-/** Functions returns the id of the winner of the game. */
+/** Functions returns the id of the winner of the game. Assumes the game is not NULL.*/
 Winner getWinner(Game game);
 
-/** Functions returns the time of the game in seconds. */
+/** Functions returns the time of the game in seconds. Assumes the game is not NULL.*/
 int getGameTime(Game game);
 
 /** Function that creates a new game. Returns NULL if allocation failed. */

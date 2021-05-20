@@ -189,15 +189,18 @@ void chessDestroy(ChessSystem chess) {
  * chessAddTournament: add a new tournament to a chess system.
  *
  * @param chess - chess system to add the tournament to. Must be non-NULL.
- * @param tournament_id - new tournament id. Must be non-negative, and unique.
+ * @param tournament_id - new tournament id. Must be positive, and unique.
+ * @param max_games_per_player - maximum number of games a player is allow to play in the specified tournament.
+ *                               Must be postivie/
  * @param tournament_location - location in which the tournament take place. Must be non-empty.
  *
  * @return
  *     CHESS_NULL_ARGUMENT - if chess/tournament_location are NULL.
  *     CHESS_INVALID_ID - the tournament ID number is invalid.
+ *     CHESS_TOURNAMENT_ALREADY_EXISTS - if a tournament with the given id already exist.
  *     CHESS_INVALID_LOCATION - if the name is empty or doesn't start with a capital letter (A -Z)
  *                      followed by small letters (a -z) and spaces (' ').
- *     CHESS_TOURNAMENT_ALREADY_EXIST - if a tournament with the given id already exist.
+ *     CHESS_INVALID_MAX_GAMES - if the maximum number of games allowed is not positive
  *     CHESS_SUCCESS - if tournament was added successfully.
  */
 ChessResult chessAddTournament(ChessSystem chess, int tournament_id,
@@ -208,15 +211,14 @@ ChessResult chessAddTournament(ChessSystem chess, int tournament_id,
     if (tournament_id < 0) {
         return CHESS_INVALID_ID;
     }
+    if (mapContains(chess->tournaments, (MapKeyElement) &tournament_id)) {
+        return CHESS_TOURNAMENT_ALREADY_EXISTS;
+    }
     if (badLocationName(tournament_location)) {
         return CHESS_INVALID_LOCATION;
     }
     if (max_games_per_player <= 0) {
         return CHESS_INVALID_MAX_GAMES;
-    }
-
-    if (mapContains(chess->tournaments, (MapKeyElement) &tournament_id)) {
-        return CHESS_TOURNAMENT_ALREADY_EXISTS;
     }
     Tournament new_tournament = tournamentCreate(tournament_location, max_games_per_player);
     if (new_tournament == NULL) {
@@ -235,7 +237,6 @@ ChessResult chessAddTournament(ChessSystem chess, int tournament_id,
             free((char *) tournament_location);
             return CHESS_OUT_OF_MEMORY;
 
-
         case MAP_NULL_ARGUMENT:
             free(getLocation(new_tournament));
             freeTournament(new_tournament);
@@ -243,10 +244,8 @@ ChessResult chessAddTournament(ChessSystem chess, int tournament_id,
 
         default:
             break;
-
     }
     return CHESS_SUCCESS;
-
 }
 
 
@@ -255,19 +254,23 @@ ChessResult chessAddTournament(ChessSystem chess, int tournament_id,
  * chessAddGame: add a new match to a chess tournament.
  *
  * @param chess - chess system that contains the tournament. Must be non-NULL.
- * @param tournament_id - the tournament id. Must be non-negative, and unique.
- * @param first_player - first player id. Must be non-negative.
- * @param second_player - second player id. Must be non-negative.
+ * @param tournament_id - the tournament id. Must be positive, and unique.
+ * @param first_player - first player id. Must be positive.
+ * @param second_player - second player id. Must be positive.
  * @param winner - indicates the winner in the match. if it is FIRST_PLAYER, then the first player won.
  *                 if it is SECOND_PLAYER, then the second player won, otherwise the match has ended with a draw.
  * @param play_time - duration of the match in seconds. Must be non-negative.
  *
  * @return
  *     CHESS_NULL_ARGUMENT - if chess is NULL.
- *     CHESS_INVALID_ID - if the tournament ID number, either the players or the winner is invalid.
+ *     CHESS_INVALID_ID - if the tournament ID number, either the players or the winner is invalid or both players
+ *                        have the same ID number.
  *     CHESS_TOURNAMENT_NOT_EXIST - if the tournament does not exist in the system.
- *     CHESS_GAME_ALREADY_EXIST - if there is already a game in the tournament with the same two players.
+ *     CHESS_TOURNAMENT_ENDED - if the tournament already ended
+ *     CHESS_GAME_ALREADY_EXISTS - if there is already a game in the tournament with the same two players
+ *                                  (both were not removed).
  *     CHESS_INVALID_PLAY_TIME - if the play time is negative.
+ *     CHESS_EXCEEDED_GAMES - if one of the players played the maximum number of games allowed
  *     CHESS_SUCCESS - if game was added successfully.
  */
 
@@ -296,6 +299,10 @@ ChessResult chessAddGame(ChessSystem chess, int tournament_id, int first_player,
     Player player1, player2;
     if(mapContains(chess->players,(MapKeyElement) &first_player)){
         player1 = (Player) mapGet(chess->players,(MapKeyElement) &first_player);
+        if(getMaxGamesPerPlayer(tournament) == getAmountOfGames(player1)){
+            return CHESS_EXCEEDED_GAMES;
+        }
+
     }
     else{
         player1 = playerCreate(chess, first_player);
@@ -312,6 +319,10 @@ ChessResult chessAddGame(ChessSystem chess, int tournament_id, int first_player,
     if(mapContains(chess->players,(MapKeyElement) &second_player)) {
 
         player2 = (Player) mapGet(chess->players, (MapKeyElement) &second_player);
+        if(getMaxGamesPerPlayer(tournament) == getAmountOfGames(player2)){
+            return CHESS_EXCEEDED_GAMES;
+        }
+
     }
     else{
         player2 = playerCreate(chess);
@@ -358,10 +369,11 @@ void handleError(ChessSystem chess, Player player, MapResult result) {
 }
 
 /**
- * chessRemoveTournament: removes the tournament and all the games played in it from the chess system.
+ * chessRemoveTournament: removes the tournament and all the games played in it from the chess system
+ *                        updates all players statistics (wins, losses, draws, average play time).
  *
  * @param chess - chess system that contains the tournament. Must be non-NULL.
- * @param tournament_id - the tournament id. Must be non-negative, and unique.
+ * @param tournament_id - the tournament id. Must be positive, and unique.
  *
  * @return
  *     CHESS_NULL_ARGUMENT - if chess is NULL.
@@ -568,10 +580,10 @@ ChessResult chessEndTournament(ChessSystem chess, int tournament_id){
 }
 
 /**
- * chessCalculateAveragePlayTime: the function returns the average playing time for a particular player.
+ * chessCalculateAveragePlayTime: the function returns the average playing time for a particular player
  *
  * @param chess - a chess system that contains the player. Must be non-NULL.
- * @param player_id - player ID. Must be non-negative.
+ * @param player_id - player ID. Must be positive.
  * @param chess_result - this variable will contain the returned error code.
  * @return
  *     CHESS_NULL_ARGUMENT - if chess is NULL.
@@ -614,13 +626,12 @@ double chessCalculateAveragePlayTime(ChessSystem chess, int player_id, ChessResu
 
 }
 
-
 /**
  * chessSavePlayersLevels: prints the rating of all players in the system as
  * explained in the *.pdf
  *
  * @param chess - a chess system. Must be non-NULL.
- * @param file - an open, writable output file, to which the ratings are printed.
+ * @param file - an open, writable output stream, to which the ratings are printed.
  * @return
  *     CHESS_NULL_ARGUMENT - if chess is NULL.
  *     CHESS_SAVE_FAILURE - if an error occurred while saving.
@@ -667,7 +678,7 @@ ChessResult chessSavePlayersLevels(ChessSystem chess, FILE *file) {
  * @param path_file - the file path which within it the tournament statistics will be saved.
  * @return
  *     CHESS_NULL_ARGUMENT - if chess is NULL.
- *     CHESS_NO_TOURMENTS_ENDED - if there are no tournaments ended in the system.
+ *     CHESS_NO_TOURNAMENTS_ENDED - if there are no tournaments ended in the system.
  *     CHESS_SAVE_FAILURE - if an error occurred while saving.
  *     CHESS_SUCCESS - if the ratings was printed successfully.
  */
@@ -756,20 +767,7 @@ static ChessResult func1(ChessSystem chess, int tournament_id){
     return CHESS_SUCCESS;
 }
 
-/*
-static ChessResult playerCreate(ChessSystem chess, int id){
-    Player player = malloc(sizeof(Player));
-    if(player == NULL) {
-        chessDestroy(chess);
-        return CHESS_OUT_OF_MEMORY;
-    }
-    player->wins = 0;
-    player->losses = 0;
-    player->ties = 0;
-    player->games_participated_count = 0;
-    return player;
-}
-*/
+
 
 /*
  * Benjo:

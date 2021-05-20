@@ -2,7 +2,6 @@
 #include "chessSystem.h"
 #include <stdlib.h>
 
-#define GAME_NULL_ARGUMENT (-1)
 struct game_t {;
     int player1_id;
     int player2_id;
@@ -27,30 +26,18 @@ Game createGame(int first_player_id, int second_player_id, Winner winner, int ga
 
 
 int getFirstPlayerId(Game game) {
-    if(!game){
-        return GAME_NULL_ARGUMENT;
-    }
     return game->player1_id;
 }
 
 
 int getSecondPlayerId(Game game){
-    if(!game){
-        return GAME_NULL_ARGUMENT;
-    }
     return game->player2_id;
 }
 
 Winner getWinner(Game game){
-    if(!game){
-        return GAME_NULL_ARGUMENT;
-    }
     return game->winner;
 }
 
 int getGameTime(Game game){
-    if(!game){
-        return GAME_NULL_ARGUMENT;
-    }
     return game->game_time_seconds;
 }
