@@ -29,9 +29,19 @@ void incPlayerLosses(Player player);
 /** Function increases the tie amount of a player. Assumes the player is not NULL.   */
 void incPlayerTies(Player player);
 
+/** Function decreases the win amount of a player. Assumes the player is not NULL.   */
+void decPLayerWins(Player player);
+
+/** Function decreases the loss amount of a player. Assumes the player is not NULL.   */
+void decPlayerLosses(Player player);
+
+/** Function decreases the tie amount of a player. Assumes the player is not NULL.   */
+void decPlayerTies(Player player);
+
+
 /** Function returns the amount of games a player played. Assumes the player is not NULL.   */
 inline int getAmountOfGames(Player player);
 
-inline int chessPlayerCalculateScoreForTournament(Player player);
+inline double chessPlayerCalculateScoreForTournament(Player player);
 
 #endif //EX1_CHESSPLAYER_H

@@ -37,7 +37,7 @@ typedef enum {
 typedef struct chess_system_t *ChessSystem;
 
 /**
- * chessCreate: create an empty chess system.
+ * chessCreate:create an empty chess system.
  *
  * @return A new chess system in case of success, and NULL otherwise (e.g.
  *     in case of an allocation error)

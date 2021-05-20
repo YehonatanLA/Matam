@@ -39,7 +39,7 @@ Player playerCopy(Player player){
 
 
 inline double chessPlayerCalculateScoreForTournament(Player player){
-    return (2*player->wins + player->ties) / (player->wins + player->losses + player->ties);
+    return ((double) (2*player->wins + player->ties) / (player->wins + player->losses + player->ties));
 }
 
 inline int getAmountOfGames(Player player){
@@ -73,5 +73,16 @@ void incPlayerTies(Player player){
     player->ties++;
 }
 
+void decPLayerWins(Player player){
+    player->wins--;
+}
+
+void decPlayerLosses(Player player){
+    player->losses--;
+}
+
+void decPlayerTies(Player player){
+    player->ties--;
+}
 
 

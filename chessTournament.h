@@ -2,6 +2,7 @@
 #define EX1_CHESSTOURNAMENT_H
 
 #include "chessPlayer.h"
+#include "map.h"
 
 typedef enum {
     TOURNAMENT_NULL_ARGUMENT,
@@ -26,7 +27,7 @@ Tournament tournamentCreate(const char *location, int max_games_per_player);
 
 
 /** Functions gets the location of a tournament. Assumes the tournament is not NULL.*/
-char* getLocation(Tournament tournament);
+const char* getLocation(Tournament tournament);
 
 /** Functions gets the max games per player of a tournament. Assumes the tournament is not NULL.*/
 int getMaxGamesPerPlayer(Tournament tournament);
@@ -54,7 +55,18 @@ static void freeGame(MapDataElement game);
 /** Sets the ended boolean sign to true, thus signaling for future checks that the tournament ended.*/
 TournamentResult tournamentEndedSign(Tournament tournament);
 
+/** The function checks if the two players already played a game against each other in the tournament.
+ * Assumes that the tournament isn't NULL and that the player_ids are valid.*/
+bool sameGame(Tournament tournament, int player1_id,int player2_id);
+
+/** Checks if the tournament is empty*/
+bool isTournamentEmpty(Tournament tournament);
+
 /** */
 int calculatePointsOfPlayer(Tournament tournament, int player_id);
+
+/** The function removes wins, losses, and ties from players for the games played in the tournament.
+ * Assumes that the tournament and the players_map isn't empty or NULL. */
+void updatePlayerStatistics(Map players_map, Tournament tournament);
 
 #endif //EX1_CHESSTOURNAMENT_H
