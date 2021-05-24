@@ -26,6 +26,8 @@ void changeWinner(Game game, Winner new_winner);
 Game createGame(int first_player_id, int second_player_id, Winner winner, int game_time_seconds);
 
 
+void copyGameFields(Game new_game, Game game);
+
 
 bool IsPlay(Game game, int player_id);
 

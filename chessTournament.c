@@ -1,8 +1,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
-#include <string.h>
 #include "chessGame.h"
 #include "chessTournament.h"
+#include "chessCopyFreeCompareFunctions.h"
 
 #define NO_WINNER (-1)
 
@@ -11,45 +11,14 @@ struct tournament_t {
     int max_games_per_player;
     Map games;
     int winner_id;
+    Map players;
 
 };
 
-MapKeyElement copyKeyInt(MapKeyElement n) {
-    if (!n) {
-        return NULL;
-    }
-    int *copy = malloc(sizeof(*copy));
-    if (!copy) {
-        return NULL;
-    }
-    *copy = *(int *) n;
-    return copy;
-}
 
-void freeKeyInt(MapKeyElement n) {
-    free(n);
-}
+static MapResult filterPlayersByScore(Map players_in_tournament);
 
-int compareInts(MapKeyElement n1, MapKeyElement n2) {
-    return (*(int *) n1 - *(int *) n2);
-}
-
-void *copyGame(MapDataElement game) {
-    if (!game) {
-        return NULL;
-    }
-    Game new_game = createGame(getFirstPlayerId((Game) game), getSecondPlayerId((Game) game), getWinner((Game) game),
-                               getGameTime((Game) game));
-    if (!new_game) {
-        return NULL;
-    }
-    return new_game;
-}
-
-void freeGame(MapDataElement game) {
-    free(game);
-}
-
+static MapResult filterPlayersByLoses(Map players_in_tournament);
 
 Tournament tournamentCreate(const char *location, int max_games_per_player) {
     Tournament tournament = malloc(sizeof(Tournament));
@@ -59,6 +28,12 @@ Tournament tournamentCreate(const char *location, int max_games_per_player) {
 
     tournament->games = mapCreate(copyGame, copyKeyInt, freeGame, freeKeyInt, compareInts);
     if (!(tournament->games)) {
+        free(tournament);
+        return NULL;
+    }
+    tournament->players = mapCreate(copyPlayer, copyKeyInt, freePlayer, freeKeyInt, compareInts);
+    if(!(tournament->players)){
+        mapDestroy(tournament->games);
         free(tournament);
         return NULL;
     }
@@ -81,27 +56,13 @@ bool hasTournamentEnded(Tournament tournament) {
 }
 
 Map getGames(Tournament tournament) {
-    return tournament->games;
+
+    return mapCopy(tournament->games);
 }
 
-/*
-(){
-    Game game;
-    int first_id, second_id;
-    MAP_FOREACH(int*, iterator, tournament->games){
-        game = mapGet(tournament->games, (MapKeyElement) iterator);
-        first_id = getFirstPlayerId(game);
-        second_id = getSecondPlayerId(game);
-        if((player1_id == first_id || player2_id == first_id) && (player1_id == second_id || player2_id == second_id)){
-            free(iterator);
-            return true;
-        }
-        free(iterator);
-
-    }
-    return false;
+void freeGames(Tournament tournament){
+    mapDestroy(tournament->games);
 }
-*/
 
 bool isTournamentEmpty(Tournament tournament){
     return mapGetSize(tournament->games) <= 0;
@@ -128,6 +89,47 @@ void updatePlayerStatistics(Map players_map, Tournament tournament){
     }
 }
 
+
+void tournamentDestroy(Tournament tournament){
+    if(tournament) {
+        mapDestroy(tournament->games);
+        mapDestroy(tournament->players);
+        free(tournament);
+    }
+}
+
+
+ChessResult addPlayerToTournament(Tournament tournament, Player player, int player_id){
+    MapResult result = mapPut(tournament->players, (MapKeyElement) &player_id, player);
+    if (result != CHESS_SUCCESS) {
+        free(player);
+        switch (result) {
+            case MAP_NULL_ARGUMENT:
+                return CHESS_NULL_ARGUMENT;
+            case MAP_OUT_OF_MEMORY:
+                tournamentDestroy(tournament);
+                return CHESS_OUT_OF_MEMORY;
+            default:
+                return CHESS_SUCCESS;
+        }
+    }
+
+}
+
+ChessResult tournamentAddTournament(Tournament tournament){
+        Map players_in_tournament = getTournamentPlayers(tournament);
+    if (players_in_tournament == NULL) {
+        ///memory error
+    }
+    ///func 2: fillInPlayersInTournamentForChessEndTournament - CANCEL
+    ///func 3+4: filterPlayersByScore
+    MapResult mapResult = filterPlayersByScore(players_in_tournament);
+    if(mapGetSize(players_in_tournament) == 1){
+        int* winner_id = (int*) mapGetFirst(players_in_tournament);
+        tournament->winner_id = *winner_id;
+    }
+
+}
 
 /*
 
@@ -166,5 +168,58 @@ int calculatePointsOfPlayer(Tournament tournament, int player_id) {
 }
 */
 
-
+///func 3+4
+static MapResult filterPlayersByScore(Map players_in_tournament){
+    //get max score
+    Player player = NULL;
+    double score, maxScore = 0;
+    MAP_FOREACH(int*, ptr_player_id, players_in_tournament) {
+        player = (Player) mapGet(players_in_tournament, (MapKeyElement) ptr_player_id);
+        free(ptr_player_id);
+        ptr_player_id = NULL;
+        score = chessPlayerCalculateScoreForTournament(player);
+        maxScore = maxScore > score ? maxScore : score;
+    }
+    MapResult result;
+    MAP_FOREACH(int*, ptr_player_id, players_in_tournament) {
+        player = (Player) mapGet(players_in_tournament, (MapKeyElement) ptr_player_id);
+        score = chessPlayerCalculateScoreForTournament(player);
+        if(maxScore > score) {
+            result = mapRemove(players_in_tournament, (MapKeyElement) player);
+            if(result != MAP_SUCCESS){
+                return result;
+            }
+        }
+        free(ptr_player_id);
+        ptr_player_id = NULL;
+    }
+    return MAP_SUCCESS;
+}
+///func 5+6
+static MapResult filterPlayersByLoses(Map players_in_tournament){
+    //get min losses
+    Player player = NULL;
+    double losses, minLosses = 0;
+    MAP_FOREACH(int*, ptr_player_id, players_in_tournament) {
+        player = (Player) mapGet(players_in_tournament, (MapKeyElement) ptr_player_id);
+        free(ptr_player_id);
+        ptr_player_id = NULL;
+        losses = getPlayerLosses(player);
+        minLosses = minLosses < losses ? minLosses : losses;
+    }
+    MapResult result;
+    MAP_FOREACH(int*, ptr_player_id, players_in_tournament) {
+        player = (Player) mapGet(players_in_tournament, (MapKeyElement) ptr_player_id);
+        losses = getPlayerLosses(player);
+        if(maxScore > score) {
+            result = mapRemove(players_in_tournament, (MapKeyElement) player);
+            if(result != MAP_SUCCESS){
+                return result;
+            }
+        }
+        free(ptr_player_id);
+        ptr_player_id = NULL;
+    }
+    return MAP_SUCCESS;
+}
 

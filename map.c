@@ -206,9 +206,9 @@ MapDataElement mapGet(Map map, MapKeyElement keyElement) {
 MapResult mapRemove(Map map, MapKeyElement keyElement) {
     if (map == NULL || keyElement == NULL)
         return MAP_NULL_ARGUMENT;
+    if (map->first_node == NULL)
+        return MAP_ITEM_DOES_NOT_EXIST;
     map->iterator = map->first_node;
-    if (map->iterator == NULL)
-        return MAP_ITEM_ALREADY_EXISTS;
     while (map->iterator->next != NULL) {
         if (map->compareKeys(map->iterator->next->key, keyElement) == 0) {
             KeyData tmp = map->iterator->next;

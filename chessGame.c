@@ -41,3 +41,12 @@ Winner getWinner(Game game){
 int getGameTime(Game game){
     return game->game_time_seconds;
 }
+
+
+void copyGameFields(Game new_game, Game game){
+    new_game->player1_id = game->player1_id;
+    new_game->player2_id = game->player2_id;
+    new_game->winner = game->winner;
+    new_game->game_time_seconds = game->game_time_seconds;
+
+}

@@ -189,7 +189,7 @@ MapDataElement mapGet(Map map, MapKeyElement keyElement);
 *  will also be freed using the free function given at initialization.
 * @return
 * 	MAP_NULL_ARGUMENT if a NULL was sent to the function
-*  MAP_ITEM_DOES_NOT_EXIST if an equal key item does not already exists in the map
+*   MAP_ITEM_DOES_NOT_EXIST if an equal key item does not already exists in the map
 * 	MAP_SUCCESS the paired elements had been removed successfully
 */
 MapResult mapRemove(Map map, MapKeyElement keyElement);

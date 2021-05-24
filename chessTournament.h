@@ -47,7 +47,7 @@ static void freeKeyInt(MapKeyElement n);
 /** Function to be used for comparing to ints and returns the difference. */
 static int compareInts(MapKeyElement n1, MapKeyElement n2);
 
-static void *copyGame(MapDataElement game);
+static MapDataElement copyGame(MapDataElement game);
 
 /** Function to be used to free a Game struct. */
 static void freeGame(MapDataElement game);
@@ -65,8 +65,18 @@ bool isTournamentEmpty(Tournament tournament);
 /** */
 int calculatePointsOfPlayer(Tournament tournament, int player_id);
 
+Map getTournamentPlayers(Tournament tournament);
+
+TournamentResult tournamentEndTournament(Tournament tournament);
+
 /** The function removes wins, losses, and ties from players for the games played in the tournament.
  * Assumes that the tournament and the players_map isn't empty or NULL. */
 void updatePlayerStatistics(Map players_map, Tournament tournament);
+
+void tournamentDestroy(Tournament tournament);
+
+ChessResult addPlayerToTournament(Tournament tournament, Player player, int player_id);
+
+void freeGames(Tournament tournament);
 
 #endif //EX1_CHESSTOURNAMENT_H
