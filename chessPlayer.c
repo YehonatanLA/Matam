@@ -1,7 +1,7 @@
 #include "chessPlayer.h"
 #include <stdlib.h>
 
-#define PLAYER_NULL_ARGUMENT (-1)
+
 
 struct player_t {
     int wins;
@@ -19,6 +19,7 @@ Player createPlayer(){
     player->ties = 0;
     player->losses = 0;
     player->play_time = 0;
+
     return player;
 }
 
@@ -84,6 +85,7 @@ void incPlayerTies(Player player){
     player->ties++;
 }
 
+/*
 void decPLayerWins(Player player){
     player->wins--;
 }
@@ -94,6 +96,69 @@ void decPlayerLosses(Player player){
 
 void decPlayerTies(Player player){
     player->ties--;
+}
+*/
+
+void removePlayer(Player player){
+    player->play_time = DELETED_PLAYER;
+}
+
+void decreasePlayersStatistics(Player player1, Player player2, Winner winner, int game_time){
+    switch(winner){
+        case FIRST_PLAYER:
+            player1->wins--;
+            player2->losses--;
+        case SECOND_PLAYER:
+            player1->losses--;
+            player2->wins--;
+        default:
+            player1->ties--;
+            player2->ties--;
+
+    }
+    if(player1->play_time - game_time >= 0){
+        player1->play_time -= game_time;
+    }
+    if(player2->play_time - game_time >= 0){
+        player2->play_time -= game_time;
+    }
+
+}
+
+void increasePlayersStatistics(Player player1, Player player2, Winner winner, int game_time) {
+    switch(winner){
+        case FIRST_PLAYER:
+            player1->wins++;
+            player2->losses++;
+        case SECOND_PLAYER:
+            player1->losses++;
+            player2->wins++;
+        default:
+            player1->ties++;
+            player2->ties++;
+
+    }
+        player1->play_time += game_time;
+        player2->play_time += game_time;
+
+}
+
+void technicalWinRemovePlayer(Player player, Game game, Winner winner){
+    // If the player is NOT deleted
+    if(player->play_time != DELETED_PLAYER){
+        Winner game_win = getWinner(game);
+        if(game_win != winner){
+            player->wins++;
+
+            if(winner == DRAW){
+                player->ties--;
+            }
+            else{
+                player->losses--;
+            }
+        }
+        changeWinner(game, winner);
+    }
 }
 
 

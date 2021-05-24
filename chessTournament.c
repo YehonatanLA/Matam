@@ -83,14 +83,16 @@ bool hasTournamentEnded(Tournament tournament) {
 Map getGames(Tournament tournament) {
     return tournament->games;
 }
-yer2_id){
+
+/*
+(){
     Game game;
     int first_id, second_id;
     MAP_FOREACH(int*, iterator, tournament->games){
         game = mapGet(tournament->games, (MapKeyElement) iterator);
         first_id = getFirstPlayerId(game);
         second_id = getSecondPlayerId(game);
-        if((player1_id == first_id || player1_id == first_id) && (player1_id == second_id || player2_id == second_id)){
+        if((player1_id == first_id || player2_id == first_id) && (player1_id == second_id || player2_id == second_id)){
             free(iterator);
             return true;
         }
@@ -99,6 +101,7 @@ yer2_id){
     }
     return false;
 }
+*/
 
 bool isTournamentEmpty(Tournament tournament){
     return mapGetSize(tournament->games) <= 0;
@@ -108,26 +111,19 @@ void updatePlayerStatistics(Map players_map, Tournament tournament){
     Game game;
     int player1_id, player2_id;
     Player player1, player2;
+
     MAP_FOREACH(MapKeyElement , iterator, tournament->games){
         game = mapGet(tournament->games, iterator);
         player1_id = getFirstPlayerId(game);
         player2_id = getSecondPlayerId(game);
+
         Winner winner = getWinner(game);
+
         player1 = mapGet(players_map, (MapKeyElement) &player1_id);
         player2 = mapGet(players_map, (MapKeyElement) &player2_id);
 
-        switch(winner){
-            case FIRST_PLAYER:
-                decPLayerWins(player1);
-                decPlayerLosses(player2);
-            case SECOND_PLAYER:
-                decPLayerWins(player2);
-                decPlayerLosses(player1);
-            default:
-                decPlayerTies(player1);
-                decPlayerLosses(player2);
+        decreasePlayersStatistics(player1, player2, winner, getGameTime(game));
 
-        }
         free(iterator);
     }
 }
