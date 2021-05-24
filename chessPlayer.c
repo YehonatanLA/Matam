@@ -2,7 +2,6 @@
 #include <stdlib.h>
 
 
-
 struct player_t {
     int wins;
     int losses;
@@ -10,9 +9,9 @@ struct player_t {
     int play_time;
 };
 
-Player createPlayer(){
+Player createPlayer() {
     Player player = malloc(sizeof(Player));
-    if(!player){
+    if (!player) {
         return NULL;
     }
     player->wins = 0;
@@ -24,7 +23,7 @@ Player createPlayer(){
 }
 
 
-Player playerCopy(Player player){
+Player playerCopy(Player player) {
     if (!player) {
         return NULL;
     }
@@ -40,71 +39,42 @@ Player playerCopy(Player player){
 }
 
 
-
-
-inline double chessPlayerCalculateScoreForTournament(Player player){
-    return ((double) (2*player->wins + player->ties) / (player->wins + player->losses + player->ties));
+inline double chessPlayerCalculateScoreForTournament(Player player) {
+    return ((double) (2 * player->wins + player->ties) / (player->wins + player->losses + player->ties));
 }
 
-inline int getAmountOfGames(Player player){
+inline int getAmountOfGames(Player player) {
     return player->wins + player->losses + player->ties;
 }
 
 
-inline int getPlayerLosses(Player player){
+inline int getPlayerLosses(Player player) {
     return player->losses;
 }
 
-int getPLayerWins(Player player){
+int getPLayerWins(Player player) {
     return player->wins;
 }
 
-int getPlayerTies(Player player){
+int getPlayerTies(Player player) {
     return player->ties;
 }
 
-int getPlayerPlayTime(Player player){
+int getPlayerPlayTime(Player player) {
     return player->play_time;
 }
 
-int addGameTime(Player player, int time){
+int addGameTime(Player player, int time) {
     player->play_time += time;
 }
 
 
-
-void incPLayerWins(Player player){
-    player->wins++;
-}
-
-void incPlayerLosses(Player player){
-    player->losses++;
-}
-
-void incPlayerTies(Player player){
-    player->ties++;
-}
-
-/*
-void decPLayerWins(Player player){
-    player->wins--;
-}
-
-void decPlayerLosses(Player player){
-    player->losses--;
-}
-
-void decPlayerTies(Player player){
-    player->ties--;
-}
-*/
-
-void removePlayer(Player player){
+void removePlayer(Player player) {
     player->play_time = DELETED_PLAYER;
 }
 
-void decreasePlayersStatistics(Player player1, Player player2, Winner winner, int game_time){
-    switch(winner){
+void decreasePlayersStatistics(Player player1, Player player2, Winner winner, int game_time) {
+    switch (winner) {
         case FIRST_PLAYER:
             player1->wins--;
             player2->losses--;
@@ -116,17 +86,17 @@ void decreasePlayersStatistics(Player player1, Player player2, Winner winner, in
             player2->ties--;
 
     }
-    if(player1->play_time - game_time >= 0){
+    if (player1->play_time - game_time >= 0) {
         player1->play_time -= game_time;
     }
-    if(player2->play_time - game_time >= 0){
+    if (player2->play_time - game_time >= 0) {
         player2->play_time -= game_time;
     }
 
 }
 
 void increasePlayersStatistics(Player player1, Player player2, Winner winner, int game_time) {
-    switch(winner){
+    switch (winner) {
         case FIRST_PLAYER:
             player1->wins++;
             player2->losses++;
@@ -138,22 +108,21 @@ void increasePlayersStatistics(Player player1, Player player2, Winner winner, in
             player2->ties++;
 
     }
-        player1->play_time += game_time;
-        player2->play_time += game_time;
+    player1->play_time += game_time;
+    player2->play_time += game_time;
 
 }
 
-void technicalWinRemovePlayer(Player player, Game game, Winner winner){
+void technicalWinRemovePlayer(Player player, Game game, Winner winner) {
     // If the player is NOT deleted
-    if(player->play_time != DELETED_PLAYER){
+    if (player->play_time != DELETED_PLAYER) {
         Winner game_win = getWinner(game);
-        if(game_win != winner){
+        if (game_win != winner) {
             player->wins++;
 
-            if(winner == DRAW){
+            if (winner == DRAW) {
                 player->ties--;
-            }
-            else{
+            } else {
                 player->losses--;
             }
         }

@@ -5,6 +5,7 @@
 typedef struct player_t *Player;
 
 #define DELETED_PLAYER (-1)
+
 #include "chessGame.h"
 
 /** Function that creates a new player. return the player if succeeded, otherwise NULL.*/
