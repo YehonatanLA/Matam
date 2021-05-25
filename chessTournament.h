@@ -67,7 +67,7 @@ int calculatePointsOfPlayer(Tournament tournament, int player_id);
 
 Map getTournamentPlayers(Tournament tournament);
 
-TournamentResult tournamentEndTournament(Tournament tournament);
+ChessResult tournamentEndTournament(Tournament tournament);
 
 /** The function removes wins, losses, and ties from players for the games played in the tournament.
  * Assumes that the tournament and the players_map isn't empty or NULL. */

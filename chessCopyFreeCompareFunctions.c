@@ -69,7 +69,7 @@ void *copyGame(MapDataElement game) {
     if (!new_game) {
         return NULL;
     }
-    copyGameFields(new_game,(Game) game);
+    copyGameFields(new_game, (Game) game);
     return new_game;
 }
 
