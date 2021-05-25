@@ -750,6 +750,7 @@ ChessResult chessSaveTournamentStatistics(ChessSystem chess, char *path_file) {
             fprintf(file, "%d\n", number_of_games);
             fprintf(file, "%d\n", number_of_players);
             fclose(file);
+            free(tournament_id);
         }
     }
     return CHESS_SUCCESS;

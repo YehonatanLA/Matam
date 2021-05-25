@@ -48,3 +48,10 @@ void copyGameFields(Game new_game, Game game) {
     new_game->game_time_seconds = game->game_time_seconds;
 
 }
+
+void changeWinner(Game game, Winner new_winner){
+    if(new_winner != game->winner){
+        game->winner = new_winner;
+    }
+}
+
