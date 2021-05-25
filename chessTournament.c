@@ -140,11 +140,11 @@ void technicalWinTournamentPlayer(Tournament tournament, Game game, Winner chang
     Winner winner = getWinner(game);
     if (change_statistics_enum == FIRST_PLAYER) {
         Player player1 = (Player) mapGet(tournament->players, (MapKeyElement) &first_player_id);
-        technicalWinRemovePlayer(player1, game, winner);
+        technicalWinChessRemovePlayer(player1, game, winner);
     }
     if (change_statistics_enum == SECOND_PLAYER) {
         Player player2 = (Player) mapGet(tournament->players, (MapKeyElement) &second_player_id);
-        technicalWinRemovePlayer(player2, game, winner);
+        technicalWinChessRemovePlayer(player2, game, winner);
     }
 
 
