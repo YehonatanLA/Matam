@@ -95,6 +95,9 @@ int findLongestGameTime(Tournament tournament);
 /**Function calculates and returns the average game time. Assumes the tournament ended. */
 double getAverageGameTime(Tournament tournament);
 
+/** Function changes (if necessary) the player statistics in the player map inside tournament. */
+void technicalWinTournamentPlayer(Tournament tournament, Game game, Winner change_statistics_enum);
+
 void freeGames(Tournament tournament);
 
 #endif //EX1_CHESSTOURNAMENT_H

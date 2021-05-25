@@ -415,16 +415,16 @@ ChessResult chessRemoveTournament(ChessSystem chess, int tournament_id) {
     }
     MapResult result = mapRemove(chess->tournaments, (MapKeyElement) &tournament_id);
     ChessResult map_remove_result = handleMapRemoveError(result);
-    if(map_remove_result != CHESS_SUCCESS){
+    if (map_remove_result != CHESS_SUCCESS) {
         return map_remove_result;
     }
 
     result = mapRemove(chess->players, (MapKeyElement) &tournament_id);
     map_remove_result = handleMapRemoveError(result);
-    if(map_remove_result != CHESS_SUCCESS){
+    if (map_remove_result != CHESS_SUCCESS) {
         return map_remove_result;
     }
-    return  CHESS_SUCCESS;
+    return CHESS_SUCCESS;
 }
 
 
@@ -484,11 +484,15 @@ ChessResult chessRemovePlayer(ChessSystem chess, int player_id) {
             if (getFirstPlayerId(game) == player_id) {
 
                 player = (Player) mapGet(chess->players, (MapKeyElement) getSecondPlayerId(game));
-                technicalWinRemovePlayer(player, game, SECOND_PLAYER);
+                technicalWinChessRemovePlayer(player, game, SECOND_PLAYER);
+                technicalWinTournamentPlayer(tournament, game, SECOND_PLAYER);
+
+                //add technical win for player map in tournament
 
             } else if (getSecondPlayerId(game) == player_id) {
                 player = (Player) mapGet(chess->players, (MapKeyElement) getFirstPlayerId(game));
-                technicalWinRemovePlayer(player, game, FIRST_PLAYER);
+                technicalWinChessRemovePlayer(player, game, FIRST_PLAYER);
+                technicalWinTournamentPlayer(tournament, game, FIRST_PLAYER);
 
             }
             free(game_id);

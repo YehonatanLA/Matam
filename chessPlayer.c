@@ -113,7 +113,7 @@ void increasePlayersStatistics(Player player1, Player player2, Winner winner, in
 
 }
 
-void technicalWinRemovePlayer(Player player, Game game, Winner winner) {
+void technicalWinChessRemovePlayer(Player player, Game game, Winner winner) {
     // If the player is NOT deleted
     if (player->play_time != DELETED_PLAYER) {
         Winner game_win = getWinner(game);

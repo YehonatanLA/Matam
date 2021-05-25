@@ -135,6 +135,22 @@ int findLongestGameTime(Tournament tournament) {
 }
 
 
+void technicalWinTournamentPlayer(Tournament tournament, Game game, Winner change_statistics_enum) {
+    int first_player_id = getFirstPlayerId(game), second_player_id = getSecondPlayerId(game);
+    Winner winner = getWinner(game);
+    if (change_statistics_enum == FIRST_PLAYER) {
+        Player player1 = (Player) mapGet(tournament->players, (MapKeyElement) &first_player_id);
+        technicalWinRemovePlayer(player1, game, winner);
+    }
+    if (change_statistics_enum == SECOND_PLAYER) {
+        Player player2 = (Player) mapGet(tournament->players, (MapKeyElement) &second_player_id);
+        technicalWinRemovePlayer(player2, game, winner);
+    }
+
+
+}
+
+
 ChessResult addPlayerToTournament(Tournament tournament, Player player, int player_id) {
     MapResult result = mapPut(tournament->players, (MapKeyElement) &player_id, player);
     if (result != CHESS_SUCCESS) {

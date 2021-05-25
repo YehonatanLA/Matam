@@ -69,7 +69,7 @@ void decreasePlayersStatistics(Player player1, Player player2, Winner winner, in
 /** The function updates the win, loss, and ties of the players based on the game. */
 void increasePlayersStatistics(Player player1, Player player2, Winner winner, int game_time);
 
-void technicalWinRemovePlayer(Player player, Game game, Winner winner);
+void technicalWinChessRemovePlayer(Player player, Game game, Winner winner);
 
 inline double chessPlayerCalculateScoreForTournament(Player player);
 
