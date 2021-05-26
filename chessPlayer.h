@@ -15,13 +15,13 @@ Player playerCreate();
 Player playerCopy(Player player);
 
 /** Function returns the win amount of a player. Assumes the player is not NULL.*/
-int getPLayerWins(Player player);
+int getPLayerWins(Player player); //inline?
 
 /** Function returns the loss amount of a player. Assumes the player is not NULL.*/
-int getPlayerLosses(Player player);
+int getPlayerLosses(Player player); //inline?
 
 /** Function returns the tie amount of a player. Assumes the player is not NULL.*/
-int getPlayerTies(Player player);
+int getPlayerTies(Player player); //inline?
 
 /** Function increases the win amount of a player. Assumes the player is not NULL.   */
 void incPLayerWins(Player player);
@@ -56,7 +56,7 @@ int addGameTime(Player player, int time);
 */
 
 /** Function returns the amount of games a player played. Assumes the player is not NULL.   */
-inline int getAmountOfGames(Player player);
+int getAmountOfGames(Player player); //inline?
 
 /** Function changes the status of a player to deleted, and restarting all of his stats.
  * If the play_time argument is -1, then the player is deleted. */
@@ -71,6 +71,6 @@ void increasePlayersStatistics(Player player1, Player player2, Winner winner, in
 
 void technicalWinChessRemovePlayer(Player player, Game game, Winner winner);
 
-inline double chessPlayerCalculateScoreForTournament(Player player);
+double chessPlayerCalculateScoreForTournament(Player player); //inline?
 
 #endif //EX1_CHESSPLAYER_H

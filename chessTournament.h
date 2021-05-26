@@ -3,6 +3,7 @@
 
 #include "chessPlayer.h"
 #include "map.h"
+#include "chessCopyFreeCompareFunctions.h"
 
 typedef enum {
     TOURNAMENT_NULL_ARGUMENT,
@@ -38,26 +39,12 @@ bool hasTournamentEnded(Tournament tournament);
 /** Function that returns the map of games from the tournament. Assumes the tournament is not NULL.*/
 Map getGames(Tournament tournament);
 
-/** Function to be used for copying an int as a key. Assumes the tournament is not NULL.*/
-static MapKeyElement copyKeyInt(MapKeyElement n);
-
-/** Function to be used for freeing an int as a key. */
-static void freeKeyInt(MapKeyElement n);
-
-/** Function to be used for comparing to ints and returns the difference. */
-static int compareInts(MapKeyElement n1, MapKeyElement n2);
-
-static MapDataElement copyGame(MapDataElement game);
-
-/** Function to be used to free a Game struct. */
-static void freeGame(MapDataElement game);
-
 /** Sets the ended boolean sign to true, thus signaling for future checks that the tournament ended.*/
 TournamentResult tournamentEndedSign(Tournament tournament);
 
 /** The function checks if the two players already played a game against each other in the tournament.
  * Assumes that the tournament isn't NULL and that the player_ids are valid.*/
-bool sameGame(Tournament tournament, int player1_id, int player2_id);
+bool gameAlreadyExists(Tournament tournament, int player1_id, int player2_id);
 
 /** Checks if the tournament is empty*/
 bool isTournamentEmpty(Tournament tournament);
@@ -65,6 +52,7 @@ bool isTournamentEmpty(Tournament tournament);
 /** */
 int calculatePointsOfPlayer(Tournament tournament, int player_id);
 
+/**Function returns a copy of the players map.*/
 Map getTournamentPlayers(Tournament tournament);
 
 ChessResult tournamentEndTournament(Tournament tournament);

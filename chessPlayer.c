@@ -9,8 +9,8 @@ struct player_t {
     int play_time;
 };
 
-Player createPlayer() {
-    Player player = malloc(sizeof(Player));
+Player playerCreate() {
+    Player player = malloc(sizeof(struct player_t));
     if (!player) {
         return NULL;
     }
@@ -39,16 +39,16 @@ Player playerCopy(Player player) {
 }
 
 
-inline double chessPlayerCalculateScoreForTournament(Player player) {
+double chessPlayerCalculateScoreForTournament(Player player) { //inline?
     return ((double) (2 * player->wins + player->ties) / (player->wins + player->losses + player->ties));
 }
 
-inline int getAmountOfGames(Player player) {
+int getAmountOfGames(Player player) { //inline?
     return player->wins + player->losses + player->ties;
 }
 
 
-inline int getPlayerLosses(Player player) {
+int getPlayerLosses(Player player) { //inline?
     return player->losses;
 }
 
@@ -64,9 +64,11 @@ int getPlayerPlayTime(Player player) {
     return player->play_time;
 }
 
+/*
 int addGameTime(Player player, int time) {
     player->play_time += time;
 }
+*/
 
 
 void removePlayer(Player player) {

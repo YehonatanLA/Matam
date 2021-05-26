@@ -2,7 +2,7 @@
 #include "chessSystem.h"
 #include <stdlib.h>
 
-struct game_t { ;
+struct game_t {
     int player1_id;
     int player2_id;
     Winner winner;
@@ -11,7 +11,7 @@ struct game_t { ;
 
 
 Game createGame(int first_player_id, int second_player_id, Winner winner, int game_time_seconds) {
-    Game new_game = (Game) malloc(sizeof(Game));
+    Game new_game = (Game) malloc(sizeof(struct game_t));
     if (!new_game) {
         return NULL;
     }
@@ -49,9 +49,18 @@ void copyGameFields(Game new_game, Game game) {
 
 }
 
-void changeWinner(Game game, Winner new_winner){
-    if(new_winner != game->winner){
+void changeWinner(Game game, Winner new_winner) {
+    if (new_winner != game->winner) {
         game->winner = new_winner;
     }
 }
+
+bool checkGameWasPlayed(Game game, int player1_id, int player2_id) {
+    if ((game->player1_id == player1_id || game->player1_id == player2_id) &&
+        (game->player2_id == player1_id || game->player2_id == player2_id)) {
+        return true;
+    }
+    return false;
+}
+
 

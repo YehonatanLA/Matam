@@ -7,16 +7,16 @@
 
 
 bool testChessAddTournament() {
-	ChessSystem chess = chessCreate();
-	ASSERT_TEST(chessAddTournament(chess, 1, 4, "London") == CHESS_SUCCESS);
+    ChessSystem chess = chessCreate();
+    ASSERT_TEST(chessAddTournament(chess, 1, 4, "London") == CHESS_SUCCESS);
     ASSERT_TEST(chessAddTournament(chess, 2, 5, "London") == CHESS_SUCCESS);
     ASSERT_TEST(chessAddTournament(chess, 4, 3, "A_") == CHESS_INVALID_LOCATION);
     ASSERT_TEST(chessAddTournament(chess, 4, -1, "Test") == CHESS_INVALID_MAX_GAMES);
     ASSERT_TEST(chessAddTournament(chess, -1, 3, "Test") == CHESS_INVALID_ID);
     ASSERT_TEST(chessAddTournament(chess, 1, 10, "Paris") == CHESS_TOURNAMENT_ALREADY_EXISTS);
 
-	chessDestroy(chess);
-	return true;
+    chessDestroy(chess);
+    return true;
 }
 
 bool testChessRemoveTournament() {
@@ -31,7 +31,7 @@ bool testChessRemoveTournament() {
     return true;
 }
 
-bool testChessAddGame(){
+bool testChessAddGame() {
     ChessSystem chess = chessCreate();
     ASSERT_TEST(chessAddGame(chess, 1, 1, 2, FIRST_PLAYER, 2000) == CHESS_TOURNAMENT_NOT_EXIST);
     ASSERT_TEST(chessAddTournament(chess, 1, 4, "London") == CHESS_SUCCESS);
@@ -48,9 +48,9 @@ bool testChessAddGame(){
     return true;
 }
 
-bool testChessPrintLevelsAndTournamentStatistics(){
-    FILE* file_levels = fopen("./tests/player_levels_your_output.txt", "w");
-    if(!file_levels){
+bool testChessPrintLevelsAndTournamentStatistics() {
+    FILE *file_levels = fopen("./tests/player_levels_your_output.txt", "w");
+    if (!file_levels) {
         printf("test failed to open file, make sure you have the folder tests in the same folder with chessSystem"
                "excutable file and you have write permissions for the file /tests/player_levels_your_output.txt");
     }
@@ -69,7 +69,7 @@ bool testChessPrintLevelsAndTournamentStatistics(){
     return true;
 }
 
-bool testChessCalculateAveragePlayTime(){
+bool testChessCalculateAveragePlayTime() {
     ChessSystem chess = chessCreate();
     ChessResult *result = NULL;
     ASSERT_TEST(chessAddTournament(chess, 1, 4, "London") == CHESS_SUCCESS);
@@ -82,41 +82,41 @@ bool testChessCalculateAveragePlayTime(){
 
 
 /*The functions for the tests should be added here*/
-bool (*tests[]) (void) = {
-                      testChessAddTournament,
-                      testChessRemoveTournament,
-                      testChessAddGame,
-                      testChessPrintLevelsAndTournamentStatistics,
-                      testChessCalculateAveragePlayTime
+bool (*tests[])(void) = {
+        testChessAddTournament,
+        testChessRemoveTournament,
+        testChessAddGame,
+        testChessPrintLevelsAndTournamentStatistics,
+        testChessCalculateAveragePlayTime
 };
 
 /*The names of the test functions should be added here*/
-const char* testNames[] = {
-                           "testChessAddTournament",
-                           "testChessRemoveTournament",
-                           "testChessAddGame",
-                           "testChessPrintLevelsAndTournamentStatistics",
-                           "testChessCalculateAveragePlayTime"
+const char *testNames[] = {
+        "testChessAddTournament",
+        "testChessRemoveTournament",
+        "testChessAddGame",
+        "testChessPrintLevelsAndTournamentStatistics",
+        "testChessCalculateAveragePlayTime"
 };
 
 int main(int argc, char *argv[]) {
     if (argc == 1) {
         for (int test_idx = 0; test_idx < NUMBER_TESTS; test_idx++) {
-              RUN_TEST(tests[test_idx], testNames[test_idx]);
+            RUN_TEST(tests[test_idx], testNames[test_idx]);
         }
         return 0;
     }
     if (argc != 2) {
-      fprintf(stdout, "Usage: chessSystem <test index>\n");
-      return 0;
-  }
+        fprintf(stdout, "Usage: chessSystem <test index>\n");
+        return 0;
+    }
 
-  int test_idx = strtol(argv[1], NULL, 10);
-  if (test_idx < 1 || test_idx > NUMBER_TESTS) {
-      fprintf(stderr, "Invalid test index %d\n", test_idx);
-      return 0;
-  }
+    int test_idx = strtol(argv[1], NULL, 10);
+    if (test_idx < 1 || test_idx > NUMBER_TESTS) {
+        fprintf(stderr, "Invalid test index %d\n", test_idx);
+        return 0;
+    }
 
-  RUN_TEST(tests[test_idx - 1], testNames[test_idx - 1]);
-  return 0;
+    RUN_TEST(tests[test_idx - 1], testNames[test_idx - 1]);
+    return 0;
 }
