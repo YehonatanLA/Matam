@@ -102,13 +102,17 @@ void increasePlayersStatistics(Player player1, Player player2, Winner winner, in
         case FIRST_PLAYER:
             player1->wins++;
             player2->losses++;
+            break;
         case SECOND_PLAYER:
             player1->losses++;
             player2->wins++;
-        default:
+            break;
+        case DRAW:
             player1->ties++;
             player2->ties++;
-
+            break;
+        default:
+            break;
     }
     player1->play_time += game_time;
     player2->play_time += game_time;

@@ -17,6 +17,7 @@ MapKeyElement copyKeyInt(MapKeyElement n) {
     return copy;
 }
 
+
 void freeKeyInt(MapKeyElement n) {
     free(n);
 }
@@ -65,11 +66,11 @@ void *copyGame(MapDataElement game) {
     if (!game) {
         return NULL;
     }
-    Game new_game = (Game) malloc(sizeof(Game));
+//    Game new_game = (Game) malloc(sizeof(*new_game));
+    Game new_game = createCopyGame(game);
     if (!new_game) {
         return NULL;
     }
-    copyGameFields(new_game, (Game) game);
     return new_game;
 }
 

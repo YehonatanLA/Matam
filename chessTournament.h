@@ -86,6 +86,10 @@ double getAverageGameTime(Tournament tournament);
 /** Function changes (if necessary) the player statistics in the player map inside tournament. */
 void technicalWinTournamentPlayer(Tournament tournament, Game game, Winner change_statistics_enum);
 
+/** The function checks if the player that has the player_id id already played the maximum amount of games.
+ * Returns true if exceeded the max game amount, false otherwise. */
+bool playerExceededGames(Tournament tournament, int player_id);
+
 void freeGames(Tournament tournament);
 
 #endif //EX1_CHESSTOURNAMENT_H

@@ -25,8 +25,8 @@ void changeWinner(Game game, Winner new_winner);
 /** Function that creates a new game. Returns NULL if allocation failed. */
 Game createGame(int first_player_id, int second_player_id, Winner winner, int game_time_seconds);
 
-/** Function copies the games fields from one game to a new game.*/
-void copyGameFields(Game new_game, Game game);
+/** Function creates a copy of the game and returns it.*/
+Game createCopyGame(Game game);
 
 /** Function checks if the two players have played in the game. Returns true if the player played in the game,
  * false otherwise.*/

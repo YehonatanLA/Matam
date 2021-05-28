@@ -1,5 +1,4 @@
 #include "chessGame.h"
-#include "chessSystem.h"
 #include <stdlib.h>
 
 struct game_t {
@@ -41,12 +40,17 @@ int getGameTime(Game game) {
 }
 
 
-void copyGameFields(Game new_game, Game game) {
+Game createCopyGame(Game game) {
+    Game new_game = (Game) malloc(sizeof(*new_game));
+    if(new_game == NULL){
+        //memory error
+        return NULL;
+    }
     new_game->player1_id = game->player1_id;
     new_game->player2_id = game->player2_id;
     new_game->winner = game->winner;
     new_game->game_time_seconds = game->game_time_seconds;
-
+    return new_game;
 }
 
 void changeWinner(Game game, Winner new_winner) {

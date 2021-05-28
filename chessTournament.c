@@ -124,12 +124,13 @@ double getAverageGameTime(Tournament tournament) {
 
 int findLongestGameTime(Tournament tournament) {
     // If a tournament ended, there must be at least one game.
-    int max_play_time = 0;
+    int max_play_time = 0, curr_game_time;
     Game game = NULL;
     MAP_FOREACH(MapKeyElement, game_id, tournament->games) {
         game = (Game) mapGet(tournament->games, game_id);
-        if (getGameTime(game) > max_play_time) {
-            max_play_time = getGameTime(game);
+        curr_game_time = getGameTime(game);
+        if (curr_game_time > max_play_time) {
+            max_play_time = curr_game_time;
         }
         free(game_id);
     }
@@ -214,6 +215,14 @@ Map getTournamentPlayers(Tournament tournament) {
 
 
 bool gameAlreadyExists(Tournament tournament, int player1_id, int player2_id) {
+    for(int game_id = 1; game_id <= mapGetSize(tournament->games); game_id++){
+        Game game = (Game) mapGet(tournament->games, (MapKeyElement)&game_id);
+        if (checkGameWasPlayed(game, player1_id, player2_id) == true) {
+            return true;
+        }
+
+    }
+/*
     MAP_FOREACH(MapKeyElement, game_id, tournament->games) {
         Game game = (Game) mapGet(tournament->games, game_id);
         if (checkGameWasPlayed(game, player1_id, player2_id) == true) {
@@ -221,46 +230,10 @@ bool gameAlreadyExists(Tournament tournament, int player1_id, int player2_id) {
         }
         free(game_id);
     }
+*/
     return false;
 }
 
-
-/*
-
-int calculatePointsOfPlayer(Tournament tournament, int player_id) {
-    if (!tournament) {
-        return NO_WINNER;
-    }
-
-    int counter = 0, size = mapGetSize(tournament->games);
-    MAP_FOREACH(int*, game_key, tournament->games) {
-        Game game = mapGet(tournament->games, (MapKeyElement) game_key);
-        ///free(game_key)??
-        size--;
-        if (!IsPlay(game, player_id)) {
-            continue;
-        }
-        switch (getWinner(game)) {
-            case FIRST_PLAYER:
-                counter += player_id == getFirstPlayerId(game) ? 2 : 0;
-                break;
-            case SECOND_PLAYER:
-                counter += player_id == getSecondPlayerId(game) ? 2 : 0;
-                break;
-            case DRAW:
-                counter++;
-                break;
-            default:
-                break;
-        }
-
-    }
-    if (size > 0) {
-        ///memory error
-    }
-    return counter;
-}
-*/
 
 ///func 3+4
 static void filterPlayersByScore(Map players_in_tournament) {
@@ -281,8 +254,7 @@ static void filterPlayersByScore(Map players_in_tournament) {
         if (maxScore > score) {
             mapRemove(players_in_tournament, (MapKeyElement) ptr_player_id);
         }
-        freeKeyInt(ptr_player_id);
-        ptr_player_id = NULL;
+        free(ptr_player_id);
     }
 }
 
@@ -335,4 +307,39 @@ static void filterPlayersByWins(Map players_in_tournament) {
     }
 }
 
+ChessResult addGameToTournament(Tournament tournament, Game game) {
+    if (!tournament->games) {
+        return CHESS_OUT_OF_MEMORY;
+    }
+
+    int game_amount = mapGetSize(tournament->games) + 1;
+    MapResult add_game_result = mapPut(tournament->games, (MapKeyElement) &game_amount, (MapDataElement) game);
+    if (add_game_result != MAP_SUCCESS) {
+        switch (add_game_result) {
+            case MAP_NULL_ARGUMENT:
+                return CHESS_NULL_ARGUMENT;
+            case MAP_OUT_OF_MEMORY:
+                return CHESS_OUT_OF_MEMORY;
+            default:
+                return CHESS_SUCCESS;
+        }
+
+    }
+    return CHESS_SUCCESS;
+
+}
+
+
+bool playerExceededGames(Tournament tournament, int player_id){
+    Player player = NULL;
+    if(!mapContains(tournament->players, (MapKeyElement) &player_id)){
+        return false;
+    }
+    player = (Player) mapGet(tournament->players, (MapKeyElement) &player_id);
+    if (tournament->max_games_per_player == getAmountOfGames(player)) {
+        return true;
+    }
+    return false;
+
+}
 
