@@ -12,6 +12,7 @@ struct tournament_t {
     Map games;
     int winner_id;
     Map players;
+    int players_amount;
 
 };
 
@@ -42,6 +43,7 @@ Tournament tournamentCreate(const char *location, int max_games_per_player) {
     tournament->location = location;
     tournament->max_games_per_player = max_games_per_player;
     tournament->winner_id = NO_WINNER;
+    tournament->players_amount = 0;
     return tournament;
 }
 
@@ -67,7 +69,7 @@ int getNumberOfGames(Tournament tournament) {
 }
 
 int getNumberOfPlayers(Tournament tournament) {
-    return mapGetSize(tournament->players);
+    return tournament->players_amount;
 }
 
 bool isTournamentEmpty(Tournament tournament) {
@@ -153,8 +155,57 @@ void technicalWinTournamentPlayer(Tournament tournament, Game game, Winner chang
 
 }
 
+Player handleTournamentPlayerAddGame(Tournament tournament,int player_id, ChessResult *player_tournament_result){
+
+    Player player = NULL;
+    if (mapContains(tournament->players, (MapKeyElement) &player_id)) {
+
+        player = (Player) mapGet(tournament->players, (MapKeyElement) &player_id);
+        if (getPlayerPlayTime(player) == DELETED_PLAYER) { // Player was deleted
+            mapRemove(tournament->players, player);
+            player = playerCreate();
+            if (player == NULL) {
+                *player_tournament_result = CHESS_OUT_OF_MEMORY;
+                return NULL;
+            }
+        }
+
+    } else {
+        player = playerCreate();
+        if (player == NULL) {
+            *player_tournament_result = CHESS_OUT_OF_MEMORY;
+            return NULL;
+        }
+
+        MapResult result = mapPut(tournament->players, (MapKeyElement) &player_id, (MapDataElement) player);
+
+        switch (result) {
+            case MAP_NULL_ARGUMENT:
+                freePlayer(player);
+                *player_tournament_result = CHESS_NULL_ARGUMENT;
+                return NULL;
+            case MAP_OUT_OF_MEMORY:
+                freePlayer(player);
+                *player_tournament_result = CHESS_OUT_OF_MEMORY;
+                return NULL;
+            default:
+                break;
+        }
+
+        freePlayer(player);
+    }
+    *player_tournament_result = CHESS_SUCCESS;
+    player = (Player) mapGet(tournament->players, (MapKeyElement) &player_id);
+    return player;
+
+
+}
+
 
 ChessResult addPlayerToTournament(Tournament tournament, Player player, int player_id) {
+    if(getPlayerPlayTime(player) == 0){
+        tournament->players_amount++;
+    }
     MapResult result = mapPut(tournament->players, (MapKeyElement) &player_id, player);
     if (result != MAP_SUCCESS) {
         free(player);
@@ -342,4 +393,10 @@ bool playerExceededGames(Tournament tournament, int player_id){
     return false;
 
 }
+
+
+void removePlayerFromTournament(Tournament tournament, int player_id){
+    mapRemove(tournament->players, (MapKeyElement) &player_id);
+}
+
 

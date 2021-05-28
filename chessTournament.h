@@ -90,6 +90,18 @@ void technicalWinTournamentPlayer(Tournament tournament, Game game, Winner chang
  * Returns true if exceeded the max game amount, false otherwise. */
 bool playerExceededGames(Tournament tournament, int player_id);
 
+/**The function handles the creating a new tournament player and adding him to the tournament players map.
+ * If the player already exists, the function will return him. If the player is deleted, the function will
+ * remove him and create a new player. The function assumes the player has not played the maximum amount of games.*/
+Player handleTournamentPlayerAddGame(Tournament tournament, int player_id, ChessResult *player_tournament_result);
+
+/** The function add game to the tournament. Returns CHESS_OUT_OF_MEMORY if allocation failed and CHESS_SUCCESS otherwise. */
+ChessResult addGameToTournament(Tournament tournament, Game game);
+
+/**The function removes a player from the tournament. The function assumes that player_id exists in the tournament players map.*/
+void removePlayerFromTournament(Tournament tournament,int player_id);
+
+
 void freeGames(Tournament tournament);
 
 #endif //EX1_CHESSTOURNAMENT_H
