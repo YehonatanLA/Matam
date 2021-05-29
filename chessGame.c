@@ -1,6 +1,7 @@
 #include "chessGame.h"
 #include <stdlib.h>
 
+
 struct game_t {
     int player1_id;
     int player2_id;
@@ -67,4 +68,12 @@ bool checkGameWasPlayed(Game game, int player1_id, int player2_id) {
     return false;
 }
 
+void deletePlayerIdFromGame(Game game, Winner winner){
+    if(winner == FIRST_PLAYER){
+        game->player2_id = DELETED_PLAYER;
+    }
+    else if(winner == SECOND_PLAYER){
+        game->player1_id = DELETED_PLAYER;
+    }
+}
 

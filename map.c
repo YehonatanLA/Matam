@@ -163,6 +163,7 @@ MapResult mapPut(Map map, MapKeyElement keyElement, MapDataElement dataElement) 
 
     map->iterator = map->first_node;
     if(map->compareKeys(map->first_node->key, keyElement) > 0) {
+
         MapResult result = addNode(map, keyElement, dataElement);
         if(result != MAP_SUCCESS){
             return MAP_OUT_OF_MEMORY;
@@ -323,19 +324,19 @@ MapResult mapClear(Map map) {
 }
 
 
-static MapResult addNode(Map map, MapKeyElement keyElement, MapDataElement dataElement) {
+static MapResult addNode(Map map, MapKeyElement key_element, MapDataElement data_element) {
 
-    KeyData tmp = malloc(sizeof(struct Key_Data_t));
+    KeyData tmp = (KeyData) malloc(sizeof(struct Key_Data_t));
     if (tmp == NULL) {
         return MAP_OUT_OF_MEMORY;
     }
-    tmp->key = map->copyKey(keyElement);
+    tmp->key = map->copyKey(key_element);
     if (tmp->key == NULL) {
         free(tmp);
         tmp = NULL;
         return MAP_OUT_OF_MEMORY;
     }
-    tmp->data = map->copyData(dataElement);
+    tmp->data = map->copyData(data_element);
     if (tmp->data == NULL) {
         map->freeKey(tmp->key);
         tmp->key = NULL;
@@ -348,6 +349,10 @@ static MapResult addNode(Map map, MapKeyElement keyElement, MapDataElement dataE
         map->first_node = tmp;
         tmp->next = NULL;
 
+    }
+    else if(map->compareKeys(map->first_node->key, tmp->key) > 0) {
+        tmp->next = map->first_node;
+        map->first_node = tmp;
     }
     else {
         tmp->next = map->iterator->next;

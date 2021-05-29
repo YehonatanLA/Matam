@@ -5,12 +5,6 @@
 #include "map.h"
 #include "chessCopyFreeCompareFunctions.h"
 
-typedef enum {
-    TOURNAMENT_NULL_ARGUMENT,
-    TOURNAMENT_SUCCESS
-
-} TournamentResult;
-
 
 /** Type for representing a tournament that organizes games inside the chess system. */
 typedef struct tournament_t *Tournament;
@@ -39,18 +33,12 @@ bool hasTournamentEnded(Tournament tournament);
 /** Function that returns the map of games from the tournament. Assumes the tournament is not NULL.*/
 Map getGames(Tournament tournament);
 
-/** Sets the ended boolean sign to true, thus signaling for future checks that the tournament ended.*/
-TournamentResult tournamentEndedSign(Tournament tournament);
-
 /** The function checks if the two players already played a game against each other in the tournament.
  * Assumes that the tournament isn't NULL and that the player_ids are valid.*/
 bool gameAlreadyExists(Tournament tournament, int player1_id, int player2_id);
 
 /** Checks if the tournament is empty*/
 bool isTournamentEmpty(Tournament tournament);
-
-/** */
-int calculatePointsOfPlayer(Tournament tournament, int player_id);
 
 /**Function returns a copy of the players map.*/
 Map getTournamentPlayers(Tournament tournament);
@@ -63,10 +51,6 @@ void updatePlayerStatistics(Map players_map, Tournament tournament);
 
 /** The function destroys a tournament, deallocating all memory.*/
 void tournamentDestroy(Tournament tournament);
-
-/** The function adds a player to the player map inside the tournament. Returns CHESS_OUT_OF_MEMORY if
- * allocation failed, otherwise returns CHESS_SUCCESS. */
-ChessResult addPlayerToTournament(Tournament tournament, Player player, int player_id);
 
 /** Function returns the winner of a tournament. Assumes that the tournament ended.*/
 Winner getTournamentWinner(Tournament tournament);
@@ -102,6 +86,10 @@ ChessResult addGameToTournament(Tournament tournament, Game game);
 void removePlayerFromTournament(Tournament tournament,int player_id);
 
 
-void freeGames(Tournament tournament);
+
+/** The function checks if the player who has player_id played in a game
+ * in the tournament and adds a technical win to the player who played against him.
+ * If he had played in a game, return true, otherWise return false. */
+void changeGamesChessRemovePlayer(Map players_map, Tournament tournament, int player_id);
 
 #endif //EX1_CHESSTOURNAMENT_H

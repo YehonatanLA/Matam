@@ -71,9 +71,12 @@ int addGameTime(Player player, int time) {
 */
 
 
-void removePlayer(Player player) {
+/*
+void removePlayer(Player player, Tournament tournament, int player_id) {
     player->play_time = DELETED_PLAYER;
+
 }
+*/
 
 void decreasePlayersStatistics(Player player1, Player player2, Winner winner, int game_time) {
     switch (winner) {
@@ -133,6 +136,7 @@ void technicalWinChessRemovePlayer(Player player, Game game, Winner winner) {
             }
         }
         changeWinner(game, winner);
+        deletePlayerIdFromGame(game, getWinner(game));
     }
 }
 

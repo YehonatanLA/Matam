@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include "chessSystem.h"
 
+#define DELETED_PLAYER (-1)
+
 typedef struct game_t *Game;
 
 /** Functions returns the id of the first player of the game.Assumes the game is not NULL. */
@@ -32,6 +34,8 @@ Game createCopyGame(Game game);
  * false otherwise.*/
 bool checkGameWasPlayed(Game game, int player1_id, int player2_id);
 
+/** The function deletes the player id of a player that was deleted. */
+void deletePlayerIdFromGame(Game game, Winner winner);
 
 bool IsPlay(Game game, int player_id);
 
