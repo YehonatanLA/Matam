@@ -243,6 +243,7 @@ MapResult mapRemove(Map map, MapKeyElement keyElement) {
         map->freeData(tmp->data);
         tmp->data=NULL;
         free(tmp);
+        map->freeKey(keyElement);
         tmp=NULL;
         map->size--;
         return MAP_SUCCESS;
@@ -260,6 +261,7 @@ MapResult mapRemove(Map map, MapKeyElement keyElement) {
             map->freeData(tmp->data);
             tmp->data=NULL;
             free(tmp);
+            map->freeKey(keyElement);
             tmp = NULL;
             map->size--;
             return MAP_SUCCESS;

@@ -37,19 +37,7 @@ struct chess_system_t {
  * */
 static bool badLocationName(const char *location);
 
-void findMaxLevel(Map player_map, const int *taken_ids, double *max_rank, int *min_id);
-
-/**
- * The function checks if the player was written in the file or not.
- * @params -
- * taken_ids: the ids of the players that were written down in the file
- * (NOT_TAKEN value means they weren't written down yet).
- * current_id: the id of the current player.
- * @return -
- * false: if the player has already been written down in the file.
- * true: otherwise.
- * */
-static bool playerWritten(const int *taken_ids, int current_id, int size);
+void findMaxLevel(Map player_map, double *max_rank, int *min_id);
 
 /** The function handles and return the correct chess error in case there is a map error from mapPut*/
 static ChessResult handleMapPutError(MapResult result);
@@ -271,17 +259,36 @@ ChessResult chessAddGame(ChessSystem chess, int tournament_id, int first_player,
 static void
 deallocatePlayers(ChessSystem chess, Tournament tournament, int first_player_id, int second_player_id, bool first_player_allocated,
                   bool second_player_allocated, bool player1_tournament_allocated, bool player2_tournament_allocated) {
+    int *tmp_num = NULL;
     if(first_player_allocated){
-        mapRemove(chess->players, (MapKeyElement) &first_player_id);
+        tmp_num = malloc(sizeof (int*));
+        if(tmp_num != NULL){
+            *tmp_num = first_player_id;
+            mapRemove(chess->players, (MapKeyElement) tmp_num);
+
+        }
+
     }
     if(second_player_allocated){
-        mapRemove(chess->players, (MapKeyElement) &second_player_id);
+        tmp_num = malloc(sizeof (int*));
+        if(tmp_num != NULL) {
+            *tmp_num = second_player_id;
+            mapRemove(chess->players, (MapKeyElement) &second_player_id);
+        }
     }
     if(player1_tournament_allocated){
-        removePlayerFromTournament(tournament, first_player_id);
+        tmp_num = malloc(sizeof (int*));
+        if(tmp_num != NULL) {
+            *tmp_num = first_player_id;
+            removePlayerFromTournament(tournament, *tmp_num);
+        }
     }
     if(player2_tournament_allocated){
-        removePlayerFromTournament(tournament, second_player_id);
+        tmp_num = malloc(sizeof (int*));
+        if(tmp_num != NULL) {
+            *tmp_num = second_player_id;
+            removePlayerFromTournament(tournament, *tmp_num);
+        }
     }
 
 
@@ -388,7 +395,12 @@ ChessResult chessRemoveTournament(ChessSystem chess, int tournament_id) {
         // There were games in the tournament, hence the player's statistics need to be updated.
         updatePlayerStatistics(chess->players, tournament);
     }
-    MapResult result = mapRemove(chess->tournaments, (MapKeyElement) &tournament_id);
+    int *tournament_id_key = malloc(sizeof (int*));
+    if(!tournament_id){
+       return  CHESS_OUT_OF_MEMORY;
+    }
+    *tournament_id_key = tournament_id;
+    MapResult result = mapRemove(chess->tournaments, (MapKeyElement) tournament_id_key);
     ChessResult map_remove_result = handleMapRemoveError(result);
     if (map_remove_result != CHESS_SUCCESS) {
         return map_remove_result;
@@ -441,7 +453,12 @@ ChessResult chessRemovePlayer(ChessSystem chess, int player_id){
         changeGamesChessRemovePlayer(chess->players, tournament ,player_id);
         free(tournament_id);
     }
-    mapRemove(chess->players, (MapKeyElement) &player_id);
+    int *ptr_tmp = malloc(sizeof (int*));
+    if(ptr_tmp != NULL){
+        *ptr_tmp = player_id;
+        mapRemove(chess->players, (MapKeyElement) ptr_tmp);
+
+    }
     return CHESS_SUCCESS;
 }
 
@@ -629,26 +646,16 @@ ChessResult chessSavePlayersLevels(ChessSystem chess, FILE *file) {
     }
 
     int player_map_size = mapGetSize(chess->players);
-    int *taken_ids = malloc(sizeof(int *) * player_map_size);
-    if (!*(taken_ids)) {
-
-        return CHESS_OUT_OF_MEMORY;
-    }
-    for (int i = 0; i < player_map_size; i++) {
-        taken_ids[i] = NOT_TAKEN;
-    }
 
     double rank = 0;
     int id = NOT_TAKEN;
 
     for (int i = 0; i < player_map_size; i++) {
-        findMaxLevel(chess->players, taken_ids, &rank, &id);
+        findMaxLevel(chess->players, &rank, &id);
         fprintf(file, "%d %.2f\n", id, rank);
-        taken_ids[i] = id;
         id = NOT_TAKEN;
 
     }
-    free(taken_ids);
     return CHESS_SUCCESS;
 }
 
@@ -734,7 +741,7 @@ static bool badLocationName(const char *location) {
 }
 
 
-void findMaxLevel(Map player_map, const int *taken_ids, double *max_rank, int *min_id) {
+void findMaxLevel(Map player_map, double *max_rank, int *min_id) {
     double player_rank;
     int player_id;
     MAP_FOREACH(int*, iterator, player_map) {
@@ -744,10 +751,6 @@ void findMaxLevel(Map player_map, const int *taken_ids, double *max_rank, int *m
                        LOSS_CALCULATION_CONST * getPlayerLosses(player) +
                        TIES_CALCULATION_CONST * getPlayerTies(player)) / (double) (getAmountOfGames(player));
 
-        if (playerWritten(taken_ids, player_id, mapGetSize(player_map))) {
-            free(iterator);
-            continue;
-        }
         if (*min_id == NOT_TAKEN || *max_rank < player_rank) {
             *max_rank = player_rank;
             *min_id = player_id;
@@ -758,15 +761,6 @@ void findMaxLevel(Map player_map, const int *taken_ids, double *max_rank, int *m
 
 }
 
-static bool playerWritten(const int *taken_ids, int current_id, int size) {
-    if (current_id == NOT_TAKEN)
-        return false;
-    for (int i = 0; i < size; i++) {
-        if (current_id == taken_ids[i])
-            return true;
-    }
-    return false;
-}
 
 ///func 1
 static ChessResult checkArgumentsForChessEndTournament(ChessSystem chess, int tournament_id) {

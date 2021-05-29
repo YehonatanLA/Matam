@@ -350,7 +350,7 @@ bool testChessRemovePlayer_2_maaroof() {
     f2 = fopen("expected_output/add_same_game_after_remove.txt", "r");
 */
     //ASSERT_TEST(compareFile(f1, f2) == 0);
-    fclose(f1);
+    //fclose(f1);
     //fclose(f2);
 
     chessDestroy(sys1);

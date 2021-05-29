@@ -170,8 +170,12 @@ void changeGamesChessRemovePlayer(Map players_map, Tournament tournament, int pl
 
     }
     if(player_in_game){
-        removePlayerFromTournament(tournament, player_id);
-        player_in_game = false;
+        int* tmp_ptr = malloc(sizeof (int*));
+        if(tmp_ptr != NULL){
+            *tmp_ptr = player_id;
+            removePlayerFromTournament(tournament, *tmp_ptr);
+            player_in_game = false;
+        }
     }
 }
 
@@ -312,8 +316,10 @@ static ChessResult filterPlayersByScore(Map players_in_tournament) {
         if (maxScore > score) {
             mapRemove(players_in_tournament, (MapKeyElement) ptr_player_id);
         }
-        free(ptr_player_id);
-        ptr_player_id = NULL;
+        else {
+            free(ptr_player_id);
+            ptr_player_id = NULL;
+        }
     }
     mapDestroy(tmp);
     return CHESS_SUCCESS;
@@ -345,8 +351,10 @@ static ChessResult filterPlayersByLosses(Map players_in_tournament) {
         if (minLosses < losses) {
             mapRemove(players_in_tournament, (MapKeyElement) ptr_player_id);
         }
-        free(ptr_player_id);
-        ptr_player_id = NULL;
+        else {
+            free(ptr_player_id);
+            ptr_player_id = NULL;
+        }
     }
     mapDestroy(tmp);
     return CHESS_SUCCESS;
@@ -377,8 +385,10 @@ static ChessResult filterPlayersByWins(Map players_in_tournament) {
         if (maxWins > wins) {
             mapRemove(players_in_tournament, (MapKeyElement) ptr_player_id);
         }
-        free(ptr_player_id);
-        ptr_player_id = NULL;
+        else {
+            free(ptr_player_id);
+            ptr_player_id = NULL;
+        }
     }
     mapDestroy(tmp);
     return CHESS_SUCCESS;
