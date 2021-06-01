@@ -37,6 +37,5 @@ bool checkGameWasPlayed(Game game, int player1_id, int player2_id);
 /** The function deletes the player id of a player that was deleted. */
 void deletePlayerIdFromGame(Game game, Winner winner);
 
-bool IsPlay(Game game, int player_id);
 
 #endif //EX1_CHESSGAME_H

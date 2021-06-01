@@ -13,52 +13,20 @@ Player playerCreate();
 Player playerCopy(Player player);
 
 /** Function returns the win amount of a player. Assumes the player is not NULL.*/
-int getPLayerWins(Player player); //inline?
+int getPLayerWins(Player player);
 
 /** Function returns the loss amount of a player. Assumes the player is not NULL.*/
-int getPlayerLosses(Player player); //inline?
+int getPlayerLosses(Player player);
 
 /** Function returns the tie amount of a player. Assumes the player is not NULL.*/
-int getPlayerTies(Player player); //inline?
-
-/** Function increases the win amount of a player. Assumes the player is not NULL.   */
-void incPLayerWins(Player player);
-
-/** Function increases the loss amount of a player. Assumes the player is not NULL.   */
-void incPlayerLosses(Player player);
-
-/** Function increases the tie amount of a player. Assumes the player is not NULL.   */
-void incPlayerTies(Player player);
-
-/** Function decreases the win amount of a player. Assumes the player is not NULL.   *//*
-
-void decPLayerWins(Player player);
-
-*/
-/** Function decreases the loss amount of a player. Assumes the player is not NULL.   *//*
-
-void decPlayerLosses(Player player);
-
-*/
-/** Function restarts the tie amount of a player. Assumes the player is not NULL.   *//*
-
-void decPlayerTies(Player player);
-*/
+int getPlayerTies(Player player);
 
 /** Function returns the total play amount of a player. Assumes the player is not NULL.*/
 int getPlayerPlayTime(Player player);
 
-/** Function adds to the total play time. */
-/*
-int addGameTime(Player player, int time);
-*/
-
 /** Function returns the amount of games a player played. Assumes the player is not NULL.   */
-int getAmountOfGames(Player player); //inline?
+int getAmountOfGames(Player player);
 
-/** Function changes the status of a player to deleted, and restarting all of his stats.
- * If the play_time argument is -1, then the player is deleted. */
-void removePlayer(Player player);
 
 /** The function decreases the player statistics of a game played,
  * based on the winner of the game and the time played.*/
@@ -67,8 +35,12 @@ void decreasePlayersStatistics(Player player1, Player player2, Winner winner, in
 /** The function updates the win, loss, and ties of the players based on the game. */
 void increasePlayersStatistics(Player player1, Player player2, Winner winner, int game_time);
 
+/** The function changes the player statistics as a result of the removePlayer function. If that player
+ * didn't win the game, the player will gain a win and the loss/tie will be removed.*/
 void technicalWinChessRemovePlayer(Player player, Game game, Winner winner);
 
-double chessPlayerCalculateScoreForTournament(Player player); //inline?
+/** The funciton calculates and returns the score of a player in the tournament.
+ * For every win the score is increased by two, and for every tie the score is increased by one.*/
+int chessPlayerCalculateScoreForTournament(Player player);
 
 #endif //EX1_CHESSPLAYER_H

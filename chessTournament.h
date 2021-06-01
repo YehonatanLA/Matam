@@ -85,7 +85,8 @@ ChessResult addGameToTournament(Tournament tournament, Game game);
 /**The function removes a player from the tournament. The function assumes that player_id exists in the tournament players map.*/
 void removePlayerFromTournament(Tournament tournament,int player_id);
 
-
+/**The function handles possible errors of the result from mapRemove. returns the appropriate ChessResult*/
+ChessResult handleMapRemoveError(MapResult result);
 
 /** The function checks if the player who has player_id played in a game
  * in the tournament and adds a technical win to the player who played against him.

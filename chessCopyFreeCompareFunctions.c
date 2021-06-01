@@ -5,7 +5,8 @@
 #include <stdlib.h>
 
 
-MapKeyElement copyKeyInt(MapKeyElement n) {
+MapKeyElement copyKeyInt(MapKeyElement n)
+{
     if (!n) {
         return NULL;
     }
@@ -18,15 +19,18 @@ MapKeyElement copyKeyInt(MapKeyElement n) {
 }
 
 
-void freeKeyInt(MapKeyElement n) {
+void freeKeyInt(MapKeyElement n)
+{
     free(n);
 }
 
-int compareInts(MapKeyElement n1, MapKeyElement n2) {
+int compareInts(MapKeyElement n1, MapKeyElement n2)
+{
     return (*(int *) n1 - *(int *) n2);
 }
 
-MapDataElement copyPlayer(MapDataElement player) {
+MapDataElement copyPlayer(MapDataElement player)
+{
     if (!player) {
         return NULL;
     }
@@ -38,12 +42,14 @@ MapDataElement copyPlayer(MapDataElement player) {
     return (MapDataElement) new_player;
 }
 
-void freePlayer(MapDataElement player) {
+void freePlayer(MapDataElement player)
+{
     free(player);
 }
 
 
-MapDataElement copyTournament(MapDataElement tournament) {
+MapDataElement copyTournament(MapDataElement tournament)
+{
     if (!tournament) {
         return NULL;
     }
@@ -56,17 +62,18 @@ MapDataElement copyTournament(MapDataElement tournament) {
 
 }
 
-void freeTournament(MapDataElement tournament) {
+void freeTournament(MapDataElement tournament)
+{
     if (tournament) {
         tournamentDestroy(tournament);
     }
 }
 
-void *copyGame(MapDataElement game) {
+void *copyGame(MapDataElement game)
+{
     if (!game) {
         return NULL;
     }
-//    Game new_game = (Game) malloc(sizeof(*new_game));
     Game new_game = createCopyGame(game);
     if (!new_game) {
         return NULL;
@@ -74,7 +81,8 @@ void *copyGame(MapDataElement game) {
     return new_game;
 }
 
-void freeGame(MapDataElement game) {
+void freeGame(MapDataElement game)
+{
     free(game);
 }
 

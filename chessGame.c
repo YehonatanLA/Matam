@@ -10,7 +10,8 @@ struct game_t {
 };
 
 
-Game createGame(int first_player_id, int second_player_id, Winner winner, int game_time_seconds) {
+Game createGame(int first_player_id, int second_player_id, Winner winner, int game_time_seconds)
+{
     Game new_game = (Game) malloc(sizeof(struct game_t));
     if (!new_game) {
         return NULL;
@@ -23,25 +24,30 @@ Game createGame(int first_player_id, int second_player_id, Winner winner, int ga
 }
 
 
-int getFirstPlayerId(Game game) {
+int getFirstPlayerId(Game game)
+{
     return game->player1_id;
 }
 
 
-int getSecondPlayerId(Game game) {
+int getSecondPlayerId(Game game)
+{
     return game->player2_id;
 }
 
-Winner getWinner(Game game) {
+Winner getWinner(Game game)
+{
     return game->winner;
 }
 
-int getGameTime(Game game) {
+int getGameTime(Game game)
+{
     return game->game_time_seconds;
 }
 
 
-Game createCopyGame(Game game) {
+Game createCopyGame(Game game)
+{
     Game new_game = (Game) malloc(sizeof(*new_game));
     if(new_game == NULL){
         //memory error
@@ -54,13 +60,15 @@ Game createCopyGame(Game game) {
     return new_game;
 }
 
-void changeWinner(Game game, Winner new_winner) {
+void changeWinner(Game game, Winner new_winner)
+{
     if (new_winner != game->winner) {
         game->winner = new_winner;
     }
 }
 
-bool checkGameWasPlayed(Game game, int player1_id, int player2_id) {
+bool checkGameWasPlayed(Game game, int player1_id, int player2_id)
+{
     if ((game->player1_id == player1_id || game->player1_id == player2_id) &&
         (game->player2_id == player1_id || game->player2_id == player2_id)) {
         return true;
@@ -68,7 +76,8 @@ bool checkGameWasPlayed(Game game, int player1_id, int player2_id) {
     return false;
 }
 
-void deletePlayerIdFromGame(Game game, Winner winner){
+void deletePlayerIdFromGame(Game game, Winner winner)
+{
     if(winner == FIRST_PLAYER){
         game->player2_id = DELETED_PLAYER;
     }

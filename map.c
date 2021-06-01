@@ -40,7 +40,7 @@ struct Key_Data_t {
 * 	MAP_SUCCESS the KeyData element had been inserted successfully
 */
 
-static MapResult addNode(Map map, MapKeyElement keyElement, MapDataElement dataElement);
+static MapResult addNode(Map map, MapKeyElement key_element, MapDataElement data_element);
 
 
 Map mapCreate(copyMapDataElements copyDataElement,
@@ -70,11 +70,11 @@ void mapDestroy(Map map) {
         return;
     mapClear(map);
     free(map->iterator);
-    map->iterator=NULL;
+    map->iterator = NULL;
     free(map->first_node);
-    map->first_node=NULL;
+    map->first_node = NULL;
     free(map);
-    map=NULL;
+    map = NULL;
 }
 
 
@@ -93,8 +93,8 @@ Map mapCopy(Map map) {
         return new_map;
     }
     //else
-    MapKeyElement key;
-    MapDataElement data;
+    MapKeyElement key = NULL;
+    MapDataElement data = NULL;
     while (map->iterator != NULL) {
         key = map->copyKey(map->iterator->key);
         if (key == NULL) {
@@ -114,11 +114,17 @@ Map mapCopy(Map map) {
             mapDestroy(new_map);
             return NULL;
         }
+        map->freeKey(key);
+        key = NULL;
+        map->freeData(data);
+        data = NULL;
         map->iterator = map->iterator->next;
     }
-    map->freeData(data);
     map->freeKey(key);
-    new_map->iterator=NULL;
+    key = NULL;
+    map->freeData(data);
+    data = NULL;
+    new_map->iterator = NULL;
     new_map->size = map->size;
     return new_map;
 
@@ -157,26 +163,21 @@ MapResult mapPut(Map map, MapKeyElement keyElement, MapDataElement dataElement) 
         if(result != MAP_SUCCESS){
             return MAP_OUT_OF_MEMORY;
         }
-
         return MAP_SUCCESS;
     }
 
     map->iterator = map->first_node;
     if(map->compareKeys(map->first_node->key, keyElement) > 0) {
-
         MapResult result = addNode(map, keyElement, dataElement);
-        if(result != MAP_SUCCESS){
-            return MAP_OUT_OF_MEMORY;
-        }
-        return MAP_SUCCESS;
+        return result;
     }
         if(map->compareKeys(map->first_node->key, keyElement) == 0){
-            MapDataElement tmp = map->copyData(dataElement);
-            if (tmp == NULL) {
+            MapDataElement tmp_data = map->copyData(dataElement);
+            if (tmp_data == NULL) {
                 return MAP_OUT_OF_MEMORY;
             }
             map->freeData(map->first_node->data);
-            map->first_node->data = tmp;
+            map->first_node->data = tmp_data;
             return MAP_SUCCESS;
 
         }
@@ -193,7 +194,7 @@ MapResult mapPut(Map map, MapKeyElement keyElement, MapDataElement dataElement) 
 
     }
 
-    //Exists. hence, update.
+    //Exists. Hence, update.
     if (map->compareKeys(map->iterator->next->key, keyElement) == 0) {
         // Moving to the right KeyData element needed to update.
         map->iterator = map->iterator->next;
@@ -239,12 +240,11 @@ MapResult mapRemove(Map map, MapKeyElement keyElement) {
         map->first_node = map->first_node->next;
 
         map->freeKey(tmp->key);
-        tmp->key=NULL;
+        tmp->key = NULL;
         map->freeData(tmp->data);
-        tmp->data=NULL;
+        tmp->data = NULL;
         free(tmp);
-        map->freeKey(keyElement);
-        tmp=NULL;
+        tmp = NULL;
         map->size--;
         return MAP_SUCCESS;
     }
@@ -254,14 +254,12 @@ MapResult mapRemove(Map map, MapKeyElement keyElement) {
     while (map->iterator->next != NULL) {
         if (map->compareKeys(map->iterator->next->key, keyElement) == 0) {
             KeyData tmp = map->iterator->next;
-            map->iterator->next = (map->iterator->next->next == NULL) ? map->iterator->next->next : NULL;
-
+            map->iterator->next = map->iterator->next->next;
             map->freeKey(tmp->key);
             tmp->key=NULL;
             map->freeData(tmp->data);
             tmp->data=NULL;
             free(tmp);
-            map->freeKey(keyElement);
             tmp = NULL;
             map->size--;
             return MAP_SUCCESS;
@@ -306,6 +304,7 @@ MapKeyElement mapGetNext(Map map) {
 MapResult mapClear(Map map) {
     if (map == NULL)
         return MAP_NULL_ARGUMENT;
+
     if (map->first_node == NULL)
         return MAP_SUCCESS;
     KeyData temp = NULL;

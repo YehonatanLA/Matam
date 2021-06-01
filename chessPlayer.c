@@ -9,7 +9,8 @@ struct player_t {
     int play_time;
 };
 
-Player playerCreate() {
+Player playerCreate()
+{
     Player player = malloc(sizeof(struct player_t));
     if (!player) {
         return NULL;
@@ -23,7 +24,8 @@ Player playerCreate() {
 }
 
 
-Player playerCopy(Player player) {
+Player playerCopy(Player player)
+{
     if (!player) {
         return NULL;
     }
@@ -39,46 +41,40 @@ Player playerCopy(Player player) {
 }
 
 
-double chessPlayerCalculateScoreForTournament(Player player) { //inline?
-    return ((double) (2 * player->wins + player->ties) / (player->wins + player->losses + player->ties));
+int chessPlayerCalculateScoreForTournament(Player player)
+{
+    return  2 * player->wins + player->ties;
 }
 
-int getAmountOfGames(Player player) { //inline?
+int getAmountOfGames(Player player)
+{
     return player->wins + player->losses + player->ties;
 }
 
 
-int getPlayerLosses(Player player) { //inline?
+int getPlayerLosses(Player player)
+{
     return player->losses;
 }
 
-int getPLayerWins(Player player) {
+int getPLayerWins(Player player)
+{
     return player->wins;
 }
 
-int getPlayerTies(Player player) {
+int getPlayerTies(Player player)
+{
     return player->ties;
 }
 
-int getPlayerPlayTime(Player player) {
+int getPlayerPlayTime(Player player)
+{
     return player->play_time;
 }
 
-/*
-int addGameTime(Player player, int time) {
-    player->play_time += time;
-}
-*/
 
-
-/*
-void removePlayer(Player player, Tournament tournament, int player_id) {
-    player->play_time = DELETED_PLAYER;
-
-}
-*/
-
-void decreasePlayersStatistics(Player player1, Player player2, Winner winner, int game_time) {
+void decreasePlayersStatistics(Player player1, Player player2, Winner winner, int game_time)
+{
     switch (winner) {
         case FIRST_PLAYER:
             player1->wins--;
@@ -100,7 +96,8 @@ void decreasePlayersStatistics(Player player1, Player player2, Winner winner, in
 
 }
 
-void increasePlayersStatistics(Player player1, Player player2, Winner winner, int game_time) {
+void increasePlayersStatistics(Player player1, Player player2, Winner winner, int game_time)
+{
     switch (winner) {
         case FIRST_PLAYER:
             player1->wins++;
@@ -122,7 +119,8 @@ void increasePlayersStatistics(Player player1, Player player2, Winner winner, in
 
 }
 
-void technicalWinChessRemovePlayer(Player player, Game game, Winner winner) {
+void technicalWinChessRemovePlayer(Player player, Game game, Winner winner)
+{
     // If the player is NOT deleted
     if (player->play_time != DELETED_PLAYER) {
         Winner game_win = getWinner(game);
